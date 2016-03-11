@@ -1,0 +1,182 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="ca.utoronto.ee1778.superfit.controller.HistoryFragment">
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart_history"
+        android:layout_width="241dp"
+        android:layout_height="192dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_weight="0.34"
+        android:visibility="gone" />
+
+
+    <Button
+        android:id="@+id/button_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="New Button"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardview_history_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:clickable="false"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <com.github.lzyzsd.circleprogress.DonutProgress
+                android:id="@+id/donut_progress"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                custom:donut_finished_color="@android:color/holo_green_dark"
+                custom:donut_finished_stroke_width="10dp"
+                custom:donut_progress="70"
+                custom:donut_text_color="@android:color/holo_green_dark"
+                custom:donut_unfinished_stroke_width="9dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exercise Progress"
+
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="15dp"
+                android:id="@+id/textView4"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="25dp" />
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card5"
+        android:layout_width="match_parent"
+        android:layout_height="175dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        card_view:cardBackgroundColor="#ffffff"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <!--
+              <declare-styleable name="DonutProgress">
+                <attr name="donut_progress" format="integer"/>
+                <attr name="donut_max" format="integer"/>
+                <attr name="donut_unfinished_color" format="color"/>
+                <attr name="donut_finished_color" format="color"/>
+                <attr name="donut_finished_stroke_width" format="dimension"/>
+                <attr name="donut_unfinished_stroke_width" format="dimension"/>
+                <attr name="donut_text_size" format="dimension"/>
+                <attr name="donut_text_color" format="color"/>
+                <attr name="donut_text" format="string"/>
+                <attr name="donut_prefix_text" format="string"/>
+                <attr name="donut_suffix_text" format="string"/>
+                <attr name="donut_background_color" format="color"/>
+            </declare-styleable>
+
+            -->
+            <!-- custom:donut_inner_bottom_text_color="#214193"-->
+
+            <RelativeLayout
+                android:id="@+id/legend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+                <TextView
+                    android:id="@+id/legend_success"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_toLeftOf="@+id/state_center"
+                    android:layout_toStartOf="@+id/state_center"
+                    android:drawableLeft="@drawable/stacked_one_point3_bck"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/stacked_one_point3_bck"
+                    android:text="Passed"
+                    android:textColor="#ff2b2b2b"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/state_center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="5dp"
+                    android:text=""
+                    android:textSize="12sp"
+                   />
+                <TextView
+                    android:id="@+id/legend_fail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_toRightOf="@+id/state_center"
+                    android:layout_toEndOf="@+id/state_center"
+                    android:drawableLeft="@drawable/stacked_one_point1_bck"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/stacked_one_point1_bck"
+                    android:text="Failed"
+                    android:textColor="#ff2b2b2b"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <com.db.chart.view.StackBarChartView xmlns:chart="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/stackbar_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/legend"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                chart:chart_fontSize="10sp"
+                chart:chart_labelColor="#929b88" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.34"
+        android:onClick="updateBarchart"/>
+
+
+</LinearLayout>

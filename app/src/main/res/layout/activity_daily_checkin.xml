@@ -10,12 +10,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ca.utoronto.ee1778.superfit.controller.DailyCheckinActivity">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageview_daily_result"
+        android:layout_gravity="center_horizontal" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textview_heartRate"
-        android:text="Large Text"
+        android:text="HeartRate"
         android:layout_marginTop="70dp"
         android:layout_gravity="center_horizontal" />
 
@@ -23,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text="Movement"
         android:id="@+id/textview_tile"
 
         android:layout_centerHorizontal="true"
@@ -44,6 +50,30 @@
         android:text="connect Ble"
         android:id="@+id/btnBleConnect"
         android:onClick="onBtnSetupBle"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="exercise"
+        android:id="@+id/textview_daily_exercise"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="sets"
+        android:id="@+id/textview_daily_sets"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="rep"
+        android:id="@+id/textview_daily_rep"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Schedule;
 import ca.utoronto.ee1778.superfit.object.User;
 
 /**
@@ -132,7 +133,7 @@ public class DbUtils {
             cursor = db.query(DbHelper.TABLE_NAME_DAILY,
                     new String[]{DbHelper.TABLE_DAILY_COL_EXERCISE, DbHelper.TABLE_DAILY_COL_COMRATE,
                             DbHelper.TABLE_DAILY_COL_DATE, DbHelper.TABLE_DAILY_COL_WEIGHT, DbHelper.TABLE_DAILY_COL_REP, DbHelper.TABLE_DAILY_COL_SET},
-                    null, null, null, null, DbHelper.TABLE_DAILY_COL_DATE+" DESC");
+                    null, null, null, null, DbHelper.TABLE_DAILY_COL_DATE + " DESC");
 
             if (cursor.getCount() > 0) {
                 exercises = new ArrayList<>(cursor.getCount());
@@ -163,8 +164,7 @@ public class DbUtils {
         }
     }
 
-    public void recordDaily(String date, String exerciseName, double completionRate, double weight, int sets, int reps,Long scheduleId) {
-        List<Exercise> exercises = null;
+    public void recordDaily(String date, String exerciseName, double completionRate, double weight, int sets, int reps, Long scheduleId, int success_times, int failed_times) {
         Cursor cursor = null;
         r.lock();
         try {
@@ -177,10 +177,12 @@ public class DbUtils {
                     "`" + DbHelper.TABLE_DAILY_COL_WEIGHT + "`," +
                     "`" + DbHelper.TABLE_DAILY_COL_REP + "`," +
                     "`" + DbHelper.TABLE_DAILY_COL_SCHDID + "`," +
+                    "`" + DbHelper.TABLE_DAILY_COL_FAILED + "`," +
+                    "`" + DbHelper.TABLE_DAILY_COL_SUCCESS + "`," +
                     "`" + DbHelper.TABLE_DAILY_COL_SET + "`) " +
 
                     "VALUES ('" + exerciseName + "','" + 0 + "','" + date
-                    + "','" + completionRate + "','" + weight + "','" + reps + "','" + scheduleId + "','" + sets + "')";
+                    + "','" + completionRate + "','" + weight + "','" + reps + "','" + scheduleId + "','+" + failed_times + "+','" + success_times + "','" + sets + "')";
 
             db.execSQL(sql);
             db.setTransactionSuccessful();
@@ -196,6 +198,50 @@ public class DbUtils {
                 db.close();
             }
 
+        }
+    }
+
+    public Schedule getCurrentSchedule() {
+        Schedule schedule = new Schedule();
+        Cursor cursor = null;
+        r.lock();
+        try {
+            db = dbHelper.getReadableDatabase();
+            String whereClaus= DbHelper.TABLE_SCHEDULE_COL_ACTIVE+"=?";
+            String []argsClaus = new String[]{"1"};
+            cursor = db.query(DbHelper.TABLE_NAME_SCHEDULE,
+                    new String[]{DbHelper.TABLE_SCHEDULE_COL_ID, DbHelper.TABLE_SCHEDULE_COL_USER_ID,
+                            DbHelper.TABLE_SCHEDULE_COL_EXERCISE, DbHelper.TABLE_SCHEDULE_COL_REP,
+                            DbHelper.TABLE_SCHEDULE_COL_NUM_OF_SET, DbHelper.TABLE_SCHEDULE_COL_WEIGHT,
+                            DbHelper.TABLE_SCHEDULE_COL_ACTIVE},
+                    whereClaus, argsClaus, null, null, null);
+
+            if (cursor.getCount() > 1) {
+
+                throw new Exception("more than one schedule!");
+            } else {
+
+                cursor.moveToNext();
+                schedule.setId(cursor.getLong(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_ID)));
+                schedule.setActive(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_ACTIVE)));
+                schedule.setExercise(cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_EXERCISE)));
+                schedule.setRep(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_REP)));
+                schedule.setSets(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_NUM_OF_SET)));
+                schedule.setWeight(cursor.getDouble(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_WEIGHT)));
+
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage());
+        } finally {
+
+            r.unlock();
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+            return schedule;
         }
     }
 //

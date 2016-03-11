@@ -38,11 +38,20 @@ public class ExerciseService {
 
         dbUtils.recordDaily(exercise.getDate(),
                 exercise.getName(), exercise.getCompletionRate(),
-                exercise.getWeight(), exercise.getNumOfSet(), exercise.getRepetition(), exercise.getScheduleId());
+                exercise.getWeight(), exercise.getNumOfSet(), exercise.getRepetition(), exercise.getScheduleId(), exercise.getSuccess_times(), exercise.getFailed_times());
     }
 
     public boolean tester(Result result) {
         return false;
     }
+    // return the pitch as degree unit from -180 to 180
+    public  double calculatePitch(double x, double y, double z){
+        // reusltInRadian range from -pi/2 through pi/2
+        double epi = 0.00001;
+        if (y*y + z*z < epi) return 90;
 
+        double reusltInRadian = Math.atan(x/(y*y + z*z));
+
+        return Math.toDegrees(reusltInRadian);
+    }
 }

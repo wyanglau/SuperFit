@@ -68,6 +68,7 @@ import ca.utoronto.ee1778.superfit.common.GattInfo;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
 import ca.utoronto.ee1778.superfit.common.Sensor;
 import ca.utoronto.ee1778.superfit.common.SensorTagGatt;
+import ca.utoronto.ee1778.superfit.service.ExerciseService;
 import ca.utoronto.ee1778.superfit.utils.Point3D;
 
 
@@ -77,9 +78,11 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
     private int SAMPLING_PERIOD = 500;
     private int SAMPLING_PROGREE = SAMPLING_PERIOD / 10;
 
-    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller,BluetoothGatt mBluetoothGatt) {
-        super(con, device, service, controller,mBluetoothGatt);
+    private ExerciseService exerciseService;
 
+    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt) {
+        super(con, device, service, controller, mBluetoothGatt);
+        exerciseService = new ExerciseService(con);
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
 
         for (BluetoothGattCharacteristic c : characteristics) {
@@ -95,7 +98,6 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
         }
 
 
-
     }
 
     public static boolean isCorrectService(BluetoothGattService service) {
@@ -108,12 +110,12 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
     public void enableService() {
         byte b[] = new byte[]{0x7F, 0x00};
         // if (row.WOS.isChecked()) b[0] = (byte)0xFF;
-        int error = mBTLeService.writeCharacteristic(this.configC, b,mBluetoothGatt);
+        int error = mBTLeService.writeCharacteristic(this.configC, b, mBluetoothGatt);
         if (error != 0) {
             if (this.configC != null)
                 Log.d("SensorTagMvementProfile", "Sensor config failed: " + this.configC.getUuid().toString() + " Error: " + error);
         }
-        error = this.mBTLeService.setCharacteristicNotification(this.dataC, true,mBluetoothGatt);
+        error = this.mBTLeService.setCharacteristicNotification(this.dataC, true, mBluetoothGatt);
         if (error != 0) {
             if (this.dataC != null)
                 Log.d("SensorTagMvementProfile", "Sensor notification enable failed: " + this.configC.getUuid().toString() + " Error: " + error);
@@ -125,12 +127,12 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
     @Override
     public void disableService() {
-        int error = mBTLeService.writeCharacteristic(this.configC, new byte[]{0x00, 0x00},mBluetoothGatt);
+        int error = mBTLeService.writeCharacteristic(this.configC, new byte[]{0x00, 0x00}, mBluetoothGatt);
         if (error != 0) {
             if (this.configC != null)
                 Log.d("SensorTagMvementProfile", "Sensor config failed: " + this.configC.getUuid().toString() + " Error: " + error);
         }
-        error = this.mBTLeService.setCharacteristicNotification(this.dataC, false,mBluetoothGatt);
+        error = this.mBTLeService.setCharacteristicNotification(this.dataC, false, mBluetoothGatt);
         if (error != 0) {
             if (this.dataC != null)
                 Log.d("SensorTagMvementProfile", "Sensor notification disable failed: " + this.configC.getUuid().toString() + " Error: " + error);
@@ -146,8 +148,7 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
     }
 
-    @Override
-    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View view
+    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View movementTextview, View resultImage
     ) {
         byte[] value = c.getValue();
         if (c.equals(this.dataC)) {
@@ -155,31 +156,21 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             Point3D v;
             v = Sensor.MOVEMENT_ACC.convert(value);
 
-           float X  = (float)v.x;
-            float Y = (float)v.y;
+            float X = (float) v.x;
+            float Y = (float) v.y;
             float Z = (float) v.z;
-            double current_angle = calculatePitch(v.x, v.y, v.z);
+            double current_angle = exerciseService.calculatePitch(v.x, v.y, v.z);
 
-            ((TextView)view).setText(String.valueOf(current_angle));
+            ((TextView) movementTextview).setText(String.valueOf(current_angle));
 
             System.out.println("Ryan:approximate:new:angle: " + current_angle);
-            System.out.println("Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y)>1?1:Double.valueOf(v.y)))));
+            System.out.println("Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
             System.out.println("Ryan:Movement:Acc:x=" + v.x + " y=" + v.y + " z=" + v.z);
 
         }
     }
 
 
-    // return the pitch as degree unit from -180 to 180
-    private static double calculatePitch(double x, double y, double z){
-        // reusltInRadian range from -pi/2 through pi/2
-        double epi = 0.00001;
-        if (y*y + z*z < epi) return 90;
-
-        double reusltInRadian = Math.atan(x/(y*y + z*z));
-
-        return Math.toDegrees(reusltInRadian);
-    }
 //    @Override
 //    public Map<String,String> getMQTTMap() {
 //        System.out.println("Ryan:Movement:------------------Getting MQTTMAP-----------------------------------");

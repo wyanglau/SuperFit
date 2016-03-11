@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,11 +39,13 @@ import ca.utoronto.ee1778.superfit.common.Constant;
 import ca.utoronto.ee1778.superfit.common.GattInfo;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
 import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Schedule;
 import ca.utoronto.ee1778.superfit.object.User;
 import ca.utoronto.ee1778.superfit.profile.HeartRateMonitorProfile;
 import ca.utoronto.ee1778.superfit.profile.SensorTagAccelerometerProfile;
 import ca.utoronto.ee1778.superfit.profile.SensorTagMovementProfile;
 import ca.utoronto.ee1778.superfit.service.ExerciseService;
+import ca.utoronto.ee1778.superfit.service.ScheduleService;
 import ca.utoronto.ee1778.superfit.utils.PreferenceWR;
 
 public class DailyCheckinActivity extends Activity {
@@ -76,6 +80,11 @@ public class DailyCheckinActivity extends Activity {
 
     private TextView heartRateTextView;
     private TextView angleTextview;
+    private TextView exerciseTextview;
+    private TextView setsTextView;
+    private TextView repTextView;
+    private ImageView resultImageView;
+    private ScheduleService scheduleService;
 
     public DailyCheckinActivity() {
     }
@@ -91,7 +100,10 @@ public class DailyCheckinActivity extends Activity {
 
         heartRateTextView = (TextView) findViewById(R.id.textview_heartRate);
         angleTextview = (TextView) findViewById(R.id.textview_tile);
-
+        exerciseTextview = (TextView) findViewById(R.id.textview_daily_exercise);
+        setsTextView = (TextView) findViewById(R.id.textview_daily_sets);
+        repTextView = (TextView) findViewById(R.id.textview_daily_rep);
+        resultImageView = (ImageView) findViewById(R.id.imageview_daily_result);
 
         exerciseService = new ExerciseService(this);
         checkInButton = (Button) findViewById(R.id.button_checkin);
@@ -103,21 +115,18 @@ public class DailyCheckinActivity extends Activity {
         // BLE
         mBtLeService = BluetoothLeService.getInstance();
         mServiceList = new ArrayList<BluetoothGattService>();
-
-        //Ryan:doubt
         gatts = mBtLeService.getGatts();
 
-        // Determine type of SensorTagGatt
+        scheduleService = new ScheduleService(this);
+        initView();
 
-//        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-//        refresh();
-//        mProfiles = mBtLeService.getmProfiles();
-//
-//        // GATT database
-//        Resources res = getResources();
-//        XmlResourceParser xpp = res.getXml(R.xml.gatt_uuid);
-//        new GattInfo(xpp);
+    }
 
+    private void initView() {
+        Schedule schedule = scheduleService.findSchedule();
+        exerciseTextview.setText(schedule.getExercise());
+        setsTextView.setText(String.valueOf(schedule.getSets()));
+        repTextView.setText(String.valueOf(schedule.getRep()));
     }
 
     public void recordAndReturn(View view) {
@@ -129,6 +138,8 @@ public class DailyCheckinActivity extends Activity {
         exercise.setLogoId(R.drawable.cat);
         exercise.setCompletionRate(99);
         exercise.setScheduleId(Long.valueOf(1));
+        exercise.setFailed_times(10);
+        exercise.setSuccess_times(90);
 
         exerciseService.record(exercise);
 
@@ -136,8 +147,8 @@ public class DailyCheckinActivity extends Activity {
         this.finish();
     }
 
-    public void onBtnSetupBle(View view){
-        Intent intent = new Intent(this,BluetoothSearchActivity.class);
+    public void onBtnSetupBle(View view) {
+        Intent intent = new Intent(this, BluetoothSearchActivity.class);
         startActivity(intent);
     }
 
@@ -329,7 +340,7 @@ public class DailyCheckinActivity extends Activity {
                             GenericBluetoothProfile p = mProfiles.get(jj);
                             if (p.isDataC(tempC)) {
                                 if (p instanceof SensorTagMovementProfile) {
-                                    p.didUpdateValueForCharacteristic(tempC, angleTextview);
+                                    ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView);
                                 } else {
                                     p.didUpdateValueForCharacteristic(tempC, heartRateTextView);
                                 }
@@ -403,6 +414,8 @@ public class DailyCheckinActivity extends Activity {
         Resources res = getResources();
         XmlResourceParser xpp = res.getXml(R.xml.gatt_uuid);
         new GattInfo(xpp);
+
+
 //        this.mBtLeService.abortTimedDisconnect();
     }
 

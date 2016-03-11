@@ -33,11 +33,21 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String TABLE_DAILY_COL_WEIGHT = "weight";
     public static final String TABLE_DAILY_COL_REP = "repetition";
     public static final String TABLE_DAILY_COL_SET = "num_of_set";
-    public static final String TABLE_DAILY_COL_SCHDID="schedule_id";
+    public static final String TABLE_DAILY_COL_SCHDID = "schedule_id";
+    public static final String TABLE_DAILY_COL_FAILED = "failed_times";
+    public static final String TABLE_DAILY_COL_SUCCESS = "success_times";
 
 
     public static final String TABLE_NAME_EXERCISE = "exercise";
     public static final String TABLE_NAME_SCHEDULE = "schedule";
+
+    public static final String TABLE_SCHEDULE_COL_ID ="id";
+    public static final String TABLE_SCHEDULE_COL_USER_ID="user_id";
+    public static final String TABLE_SCHEDULE_COL_EXERCISE="exercise";
+    public static final String TABLE_SCHEDULE_COL_REP = "repetition";
+    public static final String TABLE_SCHEDULE_COL_NUM_OF_SET="num_of_set";
+    public static final String TABLE_SCHEDULE_COL_WEIGHT="weight";
+    public static final String TABLE_SCHEDULE_COL_ACTIVE="active";
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -63,16 +73,18 @@ public class DbHelper extends SQLiteOpenHelper {
                 "`" + TABLE_DAILY_COL_WEIGHT + "`TEXT NOT NULL," +
                 "`" + TABLE_DAILY_COL_SCHDID + "`TEXT NOT NULL," +
                 "`" + TABLE_DAILY_COL_REP + "`TEXT NOT NULL," +
+                "`" + TABLE_DAILY_COL_FAILED + "`TEXT NOT NULL," +
+                "`" + TABLE_DAILY_COL_SUCCESS + "`TEXT NOT NULL," +
                 "`" + TABLE_DAILY_COL_SET + "`TEXT NOT NULL" +
                 ")";
         String sql_schedule = "CREATE TABLE if not exists`" + TABLE_NAME_SCHEDULE + "` (" +
-                "`id`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE," +
-                "`user_id`INTEGER NOT NULL," +
-                "`exercise`TEXT NOT NULL," +
-                "`repitition`INTEGER NOT NULL," +
-                "`num_of_set`INTEGER NOT NULL," +
-                "`weight`TEXT NOT NULL," +
-                "`active`INTEGER NOT NULL" +
+                "`"+TABLE_SCHEDULE_COL_ID+"`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE," +
+                "`"+TABLE_SCHEDULE_COL_USER_ID+"`INTEGER NOT NULL," +
+                "`"+TABLE_SCHEDULE_COL_EXERCISE+"`TEXT NOT NULL," +
+                "`"+TABLE_SCHEDULE_COL_REP+"`INTEGER NOT NULL," +
+                "`"+TABLE_SCHEDULE_COL_NUM_OF_SET+"`INTEGER NOT NULL," +
+                "`"+TABLE_SCHEDULE_COL_WEIGHT+"`TEXT NOT NULL," +
+                "`"+TABLE_SCHEDULE_COL_ACTIVE+"`INTEGER NOT NULL" +
                 ")";
         String sql_exercise = "CREATE TABLE if not exists`" + TABLE_NAME_EXERCISE + "` (" +
                 "`id`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE," +
@@ -82,6 +94,9 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_checkin);
         db.execSQL(sql_exercise);
         db.execSQL(sql_schedule);
+
+        String sql_data = "INSERT INTO `schedule`(`exercise`,`user_id`,`repetition`,`num_of_set`,`weight`,`active`) VALUES ('test','1','10','5','50','1')";
+        db.execSQL(sql_data);
     }
 
     @Override

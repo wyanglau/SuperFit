@@ -17,6 +17,8 @@ public class Exercise implements Serializable {
     private User user;
     private int logoId;
     private Long scheduleId;
+    private int failed_times;
+    private int success_times;
 
     public Exercise(String name, String date, double weight, int repetition,int numOfSet) {
         this.name = name;
@@ -25,6 +27,22 @@ public class Exercise implements Serializable {
         this.repetition = repetition;
         this.weight = weight;
 
+    }
+
+    public int getFailed_times() {
+        return failed_times;
+    }
+
+    public void setFailed_times(int failed_times) {
+        this.failed_times = failed_times;
+    }
+
+    public int getSuccess_times() {
+        return success_times;
+    }
+
+    public void setSuccess_times(int success_times) {
+        this.success_times = success_times;
     }
 
     public Long getScheduleId() {

@@ -145,7 +145,7 @@ public class DbUtils {
                             cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_REP)),
                             cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_SET)));
 
-                    exercise.setCompletionRate(cursor.getDouble(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_COMRATE)));
+                    exercise.setCompletionRate(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_COMRATE)));
                     exercises.add(exercise);
                 }
             }
@@ -163,6 +163,51 @@ public class DbUtils {
             return exercises;
         }
     }
+
+    public List<Exercise> queryCurrentExerciseRecords(Long scheduleId) {
+        List<Exercise> exercises = null;
+        Cursor cursor = null;
+        r.lock();
+        try {
+            db = dbHelper.getReadableDatabase();
+
+            String whereClaus = DbHelper.TABLE_DAILY_COL_SCHDID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(scheduleId)};
+            cursor = db.query(DbHelper.TABLE_NAME_DAILY,
+                    new String[]{DbHelper.TABLE_DAILY_COL_EXERCISE, DbHelper.TABLE_DAILY_COL_COMRATE,
+                            DbHelper.TABLE_DAILY_COL_DATE, DbHelper.TABLE_DAILY_COL_WEIGHT,
+                            DbHelper.TABLE_DAILY_COL_REP, DbHelper.TABLE_DAILY_COL_SET},
+                    whereClaus, whereArgs, null, null, DbHelper.TABLE_DAILY_COL_DATE + " DESC");
+
+            if (cursor.getCount() > 0) {
+                exercises = new ArrayList<>(cursor.getCount());
+                while (cursor.moveToNext()) {
+                    Exercise exercise = new Exercise(
+                            cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_EXERCISE)),
+                            cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_DATE)),
+                            cursor.getDouble(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_WEIGHT)),
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_REP)),
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_SET)));
+
+                    exercise.setCompletionRate(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_COMRATE)));
+                    exercises.add(exercise);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage());
+        } finally {
+
+            r.unlock();
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+            return exercises;
+        }
+    }
+
 
     public void recordDaily(String date, String exerciseName, double completionRate, double weight, int sets, int reps, Long scheduleId, int success_times, int failed_times) {
         Cursor cursor = null;
@@ -207,8 +252,8 @@ public class DbUtils {
         r.lock();
         try {
             db = dbHelper.getReadableDatabase();
-            String whereClaus= DbHelper.TABLE_SCHEDULE_COL_ACTIVE+"=?";
-            String []argsClaus = new String[]{"1"};
+            String whereClaus = DbHelper.TABLE_SCHEDULE_COL_ACTIVE + "=?";
+            String[] argsClaus = new String[]{"1"};
             cursor = db.query(DbHelper.TABLE_NAME_SCHEDULE,
                     new String[]{DbHelper.TABLE_SCHEDULE_COL_ID, DbHelper.TABLE_SCHEDULE_COL_USER_ID,
                             DbHelper.TABLE_SCHEDULE_COL_EXERCISE, DbHelper.TABLE_SCHEDULE_COL_REP,

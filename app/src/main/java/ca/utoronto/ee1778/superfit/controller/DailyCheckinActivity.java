@@ -105,7 +105,7 @@ public class DailyCheckinActivity extends Activity {
         repTextView = (TextView) findViewById(R.id.textview_daily_rep);
         resultImageView = (ImageView) findViewById(R.id.imageview_daily_result);
 
-        exerciseService = new ExerciseService(this);
+        exerciseService = ExerciseService.newInstance(this);
         checkInButton = (Button) findViewById(R.id.button_checkin);
         user = (User) getIntent().getSerializableExtra(Constant.EXTRAS_TAG_USER);
 
@@ -142,6 +142,7 @@ public class DailyCheckinActivity extends Activity {
         exercise.setSuccess_times(90);
 
         exerciseService.record(exercise);
+
 
 
         this.finish();
@@ -272,7 +273,7 @@ public class DailyCheckinActivity extends Activity {
                                 Log.d("DailyCheckinActivity", "Configuring service with uuid : " + s.getUuid().toString());
 
                                 if (SensorTagMovementProfile.isCorrectService(s)) {
-                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt);
+                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt,exerciseService);
                                     currentProfiles.add(mov);
                                     if (nrNotificationsOn < maxNotifications) {
                                         mov.configureService();

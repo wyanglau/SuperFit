@@ -20,6 +20,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SUC TIMES"
+        android:id="@+id/testview_daily_success_times"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textview_heartRate"
         android:text="HeartRate"
         android:layout_marginTop="70dp"

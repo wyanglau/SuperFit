@@ -1,5 +1,6 @@
 package ca.utoronto.ee1778.superfit.controller;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,13 @@ import android.view.ViewGroup;
 
 import com.github.lzyzsd.circleprogress.DonutProgress;
 
+import java.util.List;
+
 import ca.utoronto.ee1778.superfit.R;
+import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Schedule;
+import ca.utoronto.ee1778.superfit.service.ExerciseService;
+import ca.utoronto.ee1778.superfit.service.ScheduleService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +35,9 @@ public class HistoryFragment extends Fragment {
     private DonutProgress donutProgress;
 
     private StackBarController stackBarController;
+    private ScheduleService scheduleService;
+    private ExerciseService exerciseService;
+private Context mContext;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -54,6 +64,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
 
@@ -61,9 +72,20 @@ public class HistoryFragment extends Fragment {
 
         stackBarController = new StackBarController(view);
         stackBarController.init();
+
+
         return view;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        scheduleService = new ScheduleService(mContext);
+        Schedule schedule = scheduleService.findSchedule();
+        exerciseService = new ExerciseService(mContext);
+        List<Exercise> exerciseList = exerciseService.getCurrentExercises(schedule.getId());
+        updateProgress(exerciseService.totalProgress(exerciseList));
+    }
 
     public void updateProgress(final int progress) {
         getActivity().runOnUiThread(new Runnable() {

@@ -58,16 +58,20 @@ import android.content.Context;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 import java.util.UUID;
 
+import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.common.BluetoothLeService;
 import ca.utoronto.ee1778.superfit.common.GattInfo;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
 import ca.utoronto.ee1778.superfit.common.Sensor;
 import ca.utoronto.ee1778.superfit.common.SensorTagGatt;
+import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Result;
 import ca.utoronto.ee1778.superfit.service.ExerciseService;
 import ca.utoronto.ee1778.superfit.utils.Point3D;
 
@@ -75,14 +79,14 @@ import ca.utoronto.ee1778.superfit.utils.Point3D;
 public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
 
-    private int SAMPLING_PERIOD = 500;
+    private int SAMPLING_PERIOD = 50;
     private int SAMPLING_PROGREE = SAMPLING_PERIOD / 10;
 
     private ExerciseService exerciseService;
 
-    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt) {
+    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt,ExerciseService exerciseService) {
         super(con, device, service, controller, mBluetoothGatt);
-        exerciseService = new ExerciseService(con);
+        this.exerciseService = exerciseService;
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
 
         for (BluetoothGattCharacteristic c : characteristics) {
@@ -162,6 +166,19 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             double current_angle = exerciseService.calculatePitch(v.x, v.y, v.z);
 
             ((TextView) movementTextview).setText(String.valueOf(current_angle));
+            Result result = new Result(X, Y, Z);
+            ((ImageView) resultImage).setImageResource(exerciseService.tester(result) ? R.drawable.ic_bike_success : R.drawable.ic_pan_fail);
+
+           if(result.isActive()){
+
+           }
+            if(result.isFinished()){
+                //1. set 一个变量 测试完了
+                //2. 更新ACTIVITY的界面
+                result.getRecommendWeight(); //把这个WEIGHT推荐给用户
+                //3. 存储当前的schedule
+
+            }
 
             System.out.println("Ryan:approximate:new:angle: " + current_angle);
             System.out.println("Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));

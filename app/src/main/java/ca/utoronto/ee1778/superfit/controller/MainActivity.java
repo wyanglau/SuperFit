@@ -29,7 +29,10 @@ import java.util.List;
 import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.common.Constant;
 import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Schedule;
 import ca.utoronto.ee1778.superfit.object.User;
+import ca.utoronto.ee1778.superfit.service.ExerciseService;
+import ca.utoronto.ee1778.superfit.service.ScheduleService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -89,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+
+
     }
+
+
 
     //// TODO: 2016-03-09  only test data here now
     public void updateBarchart(View view) {

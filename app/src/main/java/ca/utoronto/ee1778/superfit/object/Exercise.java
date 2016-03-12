@@ -13,7 +13,7 @@ public class Exercise implements Serializable {
     private double weight;
     private int repetition;
     private int numOfSet;
-    private double completionRate;
+    private int completionRate;
     private User user;
     private int logoId;
     private Long scheduleId;
@@ -101,11 +101,11 @@ public class Exercise implements Serializable {
         this.repetition = repetition;
     }
 
-    public double getCompletionRate() {
+    public int getCompletionRate() {
         return completionRate;
     }
 
-    public void setCompletionRate(double completionRate) {
+    public void setCompletionRate(int completionRate) {
         this.completionRate = completionRate;
     }
 

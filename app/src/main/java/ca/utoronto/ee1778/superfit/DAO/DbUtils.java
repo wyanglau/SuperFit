@@ -75,7 +75,7 @@ public class DbUtils {
                 while (cursor.moveToNext()) {
                     User user = new User(
                             cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_USER_COL_NAME)),
-                            cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_USER_COL_AGE)),
+                            cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_USER_COL_AGE)),
                             cursor.getString(cursor.getColumnIndex(DbHelper.TABLE_USER_COL_WEIGHT)),
                             cursor.getLong(cursor.getColumnIndex(DbHelper.TABLE_USER_COL_ID)));
                     users.add(user);

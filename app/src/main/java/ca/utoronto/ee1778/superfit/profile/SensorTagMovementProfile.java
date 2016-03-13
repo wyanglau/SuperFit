@@ -1,11 +1,11 @@
 /**************************************************************************************************
  * Filename:       SensorTagMovementProfile.java
- * <p>
+ * <p/>
  * Copyright (c) 2013 - 2015 Texas Instruments Incorporated
- * <p>
+ * <p/>
  * All rights reserved not granted herein.
  * Limited License.
- * <p>
+ * <p/>
  * Texas Instruments Incorporated grants a world-wide, royalty-free,
  * non-exclusive license under copyrights and patents it now or hereafter
  * owns or controls to make, have made, use, import, offer to sell and sell ("Utilize")
@@ -14,32 +14,32 @@
  * to Utilize the software alone.  The patent license shall not apply to any combinations which
  * include this software, other than combinations with devices manufactured by or for TI ('TI Devices').
  * No hardware patent is licensed hereunder.
- * <p>
+ * <p/>
  * Redistributions must preserve existing copyright notices and reproduce this license (including the
  * above copyright notice and the disclaimer and (if applicable) source code license limitations below)
  * in the documentation and/or other materials provided with the distribution
- * <p>
+ * <p/>
  * Redistribution and use in binary form, without modification, are permitted provided that the following
  * conditions are met:
- * <p>
+ * <p/>
  * No reverse engineering, decompilation, or disassembly of this software is permitted with respect to any
  * software provided in binary form.
  * any redistribution and use are licensed by TI for use only with TI Devices.
  * Nothing shall obligate TI to provide you with source code for the software licensed and provided to you in object code.
- * <p>
+ * <p/>
  * If software source code is provided to you, modification and redistribution of the source code are permitted
  * provided that the following conditions are met:
- * <p>
+ * <p/>
  * any redistribution and use of the source code, including any resulting derivative works, are licensed by
  * TI for use only with TI Devices.
  * any redistribution and use of any object code compiled from the source code and any resulting derivative
  * works, are licensed by TI for use only with TI Devices.
- * <p>
+ * <p/>
  * Neither the name of Texas Instruments Incorporated nor the names of its suppliers may be used to endorse or
  * promote products derived from this software without specific prior written permission.
- * <p>
+ * <p/>
  * DISCLAIMER.
- * <p>
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY TI AND TI'S LICENSORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  * IN NO EVENT SHALL TI AND TI'S LICENSORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -71,7 +71,9 @@ import ca.utoronto.ee1778.superfit.common.SensorTagGatt;
 import ca.utoronto.ee1778.superfit.controller.DailyCheckinActivity;
 import ca.utoronto.ee1778.superfit.controller.MainActivity;
 import ca.utoronto.ee1778.superfit.object.Result;
+import ca.utoronto.ee1778.superfit.object.User;
 import ca.utoronto.ee1778.superfit.service.ExerciseService;
+import ca.utoronto.ee1778.superfit.service.UserService;
 import ca.utoronto.ee1778.superfit.utils.Point3D;
 
 
@@ -82,11 +84,15 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
     private int SAMPLING_PROGREE = SAMPLING_PERIOD / 10;
 
     private ExerciseService exerciseService;
+    private UserService userService;
+    private User user;
 
     public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt, ExerciseService exerciseService) {
         super(con, device, service, controller, mBluetoothGatt);
 
         this.exerciseService = exerciseService;
+        userService = new UserService(con);
+        user = userService.getUser();
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
 
         for (BluetoothGattCharacteristic c : characteristics) {
@@ -152,7 +158,7 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
     }
 
-    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View movementTextview, View resultImage
+    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View movementTextview, View resultImage, View totalPass
     ) {
         byte[] value = c.getValue();
         if (c.equals(this.dataC)) {
@@ -168,14 +174,19 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             Log.d("SensorTagMovementProf", "Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
             Log.d("SensorTagMovementProf", "Ryan:Movement:Acc:x=" + v.x + " y=" + v.y + " z=" + v.z);
 
-           String angle_text = String.valueOf(current_angle);
-            if(angle_text.length()>7){
-               angle_text= angle_text.substring(0,7);
+            String angle_text = String.valueOf(current_angle);
+            if (angle_text.length() > 7) {
+                angle_text = angle_text.substring(0, 7);
             }
             ((TextView) movementTextview).setText(angle_text);
             Result result = new Result(X, Y, Z);
-            boolean rt = exerciseService.tester(result);
-            if (result.isValid()) {
+            result.setAge(user.getAge());
+
+            boolean jiaxinFinished = exerciseService.tester(result);
+
+            boolean rt = exerciseService.thisRepResult == 1 ? true : false;
+
+            if (exerciseService.thisRepResult != 0) {
 
                 ((ImageView) resultImage).setImageResource(rt ? R.drawable.ic_bike_success : R.drawable.ic_pan_fail);
                 if (rt) {
@@ -187,9 +198,17 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
                 ((ImageView) resultImage).setImageResource(R.drawable.ic_question_mark);
             }
 
-            if (result.isFinished()) {
+            if (totalPass != null) {
+                ((TextView) totalPass).setText(String.valueOf(exerciseService.totalPassed));
+            }
+
+            if (jiaxinFinished) {
                 exerciseService.setFinished(true);
             }
+
+//            if (result.isFinished()) {
+//                exerciseService.setFinished(true);
+//            }
 
 
         }

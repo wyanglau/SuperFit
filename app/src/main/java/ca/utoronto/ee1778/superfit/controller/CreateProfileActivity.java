@@ -39,7 +39,7 @@ public class CreateProfileActivity extends AppCompatActivity {
     public void createNewProfile(View view) {
 
         String userName = name.getText().toString();
-        String userAge = age.getText().toString();
+        int userAge = Integer.valueOf(age.getText().toString());
         String userWeight = weight.getText().toString();
         user = new User(userName, userAge, userWeight, null);
         userService.create(user);

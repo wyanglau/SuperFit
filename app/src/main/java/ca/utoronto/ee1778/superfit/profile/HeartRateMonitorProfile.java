@@ -13,6 +13,7 @@ import java.util.List;
 
 import ca.utoronto.ee1778.superfit.common.BluetoothLeService;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
+import ca.utoronto.ee1778.superfit.service.ExerciseService;
 
 
 /**
@@ -28,10 +29,12 @@ public class HeartRateMonitorProfile extends GenericBluetoothProfile {
     private static String UUID_CHAR_BODY_LOCATION = "00002a38-0000-1000-8000-00805f9b34fb";
     private static String UUID_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
     private static final String UUID_PPCP = "00002a04-0000-1000-8000-00805f9b34fb";
+    private ExerciseService exerciseService;
 
-    public HeartRateMonitorProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt) {
+    public HeartRateMonitorProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt, ExerciseService exerciseService) {
         super(con, device, service, controller, mBluetoothGatt);
 
+        this.exerciseService = exerciseService;
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
         for (BluetoothGattCharacteristic c : characteristics) {
             if (c.getUuid().toString().equals(UUID_DATA.toString())) {
@@ -53,6 +56,7 @@ public class HeartRateMonitorProfile extends GenericBluetoothProfile {
         if (c.equals(this.dataC)) {
             float[] value = parse(c);
             ((TextView) view).setText(String.valueOf(value[0]));
+            exerciseService.setHr(value[0]);
 
         }
 

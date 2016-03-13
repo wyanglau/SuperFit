@@ -18,7 +18,7 @@ public class Result implements Serializable {
     private int age;
     private int weightOfUser;
     private boolean finished;
-
+    private double degree;
     /**
      * for the recording of how much times the user can perform the exercise correctly
      */
@@ -40,6 +40,24 @@ public class Result implements Serializable {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.degree = calDegree(x, y, z);
+    }
+
+    public double getDegree() {
+        return degree;
+    }
+
+    public void setDegree(double degree) {
+        this.degree = degree;
+    }
+
+    private double calDegree(double x, double y, double z){
+        double epi = 0.00001;
+        if (y*y + z*z < epi) return 90;
+
+        double reusltInRadian = Math.atan(x/(y*y + z*z));
+
+        return Math.toDegrees(reusltInRadian);
     }
 
     public int getSuccessTimes() {

@@ -23,9 +23,38 @@ public class ExerciseService {
     private int fail_cnt = 0;
 
 
+    Result preData;
+    public int totalPassed;
+    public int numOfStartRegionInOut;
+    public int numOfEndRegionInOut;
+    public double startDegree;
+    public double endDegree;
+    public double thresholdDegree;
+    public int thisRepResult; //0: not finish; 1: yes, passed; -1: failed
+    public int numOfReps;
+
+    /**
+     * heart rate
+     */
+    private float hr;
+
+    public float getHr() {
+        return hr;
+    }
+
+    public void setHr(float hr) {
+        this.hr = hr;
+    }
+
     public ExerciseService(Context context) {
         this.mContext = context;
         dbUtils = new DbUtils(mContext);
+
+        startDegree = -90;
+        endDegree = 90;
+        thresholdDegree = 25;
+        totalPassed = 0;
+        numOfReps = 15;
     }
 
     public static ExerciseService newInstance(Context context) {
@@ -63,16 +92,74 @@ public class ExerciseService {
     }
 
     public boolean tester(Result result) {
-        double rt = calculatePitch(result.getX(), result.getY(), result.getZ());
-        result.setValid(true);
-        if (rt > 0 && rt < 90) {
 
-            return true;
-        } else {
+        Result curData = result;
+
+        if (preData == null) {
+            preData = curData;
             return false;
         }
-    }
 
+
+        if (curData.getDegree() > 0) { //above horizontal
+            if (((endDegree - curData.getDegree()) < thresholdDegree) && ((endDegree - preData.getDegree()) > thresholdDegree)) {
+                numOfEndRegionInOut++;
+            }
+
+            if (endDegree - curData.getDegree() > thresholdDegree && endDegree - preData.getDegree() < thresholdDegree) {
+                numOfEndRegionInOut++;
+            }
+        } else {
+
+
+            if (((curData.getDegree() - startDegree) > thresholdDegree) && ((preData.getDegree() - startDegree) < thresholdDegree)) {
+
+                numOfStartRegionInOut++;
+            }
+
+            if (((curData.getDegree() - startDegree) < thresholdDegree) && ((preData.getDegree() - startDegree) > thresholdDegree)) {
+                numOfStartRegionInOut++;
+            }
+
+            System.out.println("Ryan:inout:starttime : start = " + numOfStartRegionInOut + "  currentdegree:" + curData.getDegree() + "  preDeg:" + preData.getDegree());
+        }
+
+
+        if (numOfStartRegionInOut == 2) {
+            System.out.println("Ryan:inout:current: start" + " " + numOfStartRegionInOut + "  end:" + numOfEndRegionInOut);
+            if (numOfStartRegionInOut == numOfEndRegionInOut) {
+                thisRepResult = 1;
+                totalPassed++;
+
+
+            } else {
+                thisRepResult = -1;
+            }
+
+            numOfStartRegionInOut = 0;
+            numOfEndRegionInOut = 0;
+        }
+        System.out.println("Ryan:inout:clear: start" + " " + numOfStartRegionInOut + "  end:" + numOfEndRegionInOut);
+
+
+        if (totalPassed >= 15) {
+
+
+            //result.setRecommendWeight(12); //calculate the weight and push into result object
+
+
+            preData = null;
+            totalPassed = 0;
+            numOfStartRegionInOut = 0;
+            numOfEndRegionInOut = 0;
+            thisRepResult = 0;
+            return true;
+        }
+
+        preData = curData;
+
+        return false;
+    }
 
     public void recommend(Result result) {
 

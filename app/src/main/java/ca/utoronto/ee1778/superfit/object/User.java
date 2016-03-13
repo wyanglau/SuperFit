@@ -13,12 +13,12 @@ public class User implements Serializable {
 
     private Long id;
     private String name;
-    private String age;
+    private int age;
     private String weight;
     private List<Exercise> onGoingExercises;
 
 
-    public User(String name, String age, String weight, Long id) {
+    public User(String name, int age, String weight, Long id) {
 
         this.id = id;
         this.name = name;
@@ -53,11 +53,11 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 

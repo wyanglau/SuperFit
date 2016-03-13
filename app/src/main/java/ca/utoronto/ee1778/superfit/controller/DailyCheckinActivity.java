@@ -158,6 +158,7 @@ public class DailyCheckinActivity extends Activity {
         repTextView.setVisibility(View.VISIBLE);
         checkInButton.setVisibility(View.VISIBLE);
 
+
         Schedule schedule = scheduleService.findSchedule();
         exerciseTextview.setText(schedule.getExercise());
         setsTextView.setText(String.valueOf(schedule.getSets()));
@@ -349,7 +350,7 @@ public class DailyCheckinActivity extends Activity {
 
 
                                 if (HeartRateMonitorProfile.isCorrectService(s)) {
-                                    HeartRateMonitorProfile devInfo = new HeartRateMonitorProfile(context, currentDevice, s, mBtLeService, bluetoothGatt);
+                                    HeartRateMonitorProfile devInfo = new HeartRateMonitorProfile(context, currentDevice, s, mBtLeService, bluetoothGatt,exerciseService);
                                     currentProfiles.add(devInfo);
                                     devInfo.configureService();
                                     Log.d("DailyCheckinActivity", "Found Heart Rate!");
@@ -398,7 +399,11 @@ public class DailyCheckinActivity extends Activity {
                                 GenericBluetoothProfile p = mProfiles.get(jj);
                                 if (p.isDataC(tempC)) {
                                     if (p instanceof SensorTagMovementProfile) {
-                                        ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView);
+                                        if (activity_mode == Constant.MODE_CHECK_IN) {
+                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, null);
+                                        } else {
+                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes);
+                                        }
                                     } else {
                                         p.didUpdateValueForCharacteristic(tempC, heartRateTextView);
                                     }

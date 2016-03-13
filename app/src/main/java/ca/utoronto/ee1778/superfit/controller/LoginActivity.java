@@ -35,17 +35,26 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
-
-
-
     }
+
+
+    @Override
+    public void finish() {
+        super.finish();
+    }
+
     @Override
     public void onResume(){
         super.onResume();
-        initBleService();
-        detectUser();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initBleService();
+                detectUser();
+            }
+        }).start();
+
     }
 
     private void initBleService() {
@@ -152,6 +161,11 @@ public class LoginActivity extends AppCompatActivity {
     };
 
     private void detectUser() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         userService = new UserService(this);
         if (!checkUser()) {
 

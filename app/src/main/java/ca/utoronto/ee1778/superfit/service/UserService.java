@@ -38,7 +38,7 @@ public class UserService {
 
     public void create(User user) {
 
-        dbUtils.createUser(user.getName(), user.getAge(), user.getWeight());
+        dbUtils.createUser(user.getName(), String.valueOf(user.getAge()), user.getWeight());
 
     }
 

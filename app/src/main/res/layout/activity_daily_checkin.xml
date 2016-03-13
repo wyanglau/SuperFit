@@ -30,8 +30,9 @@
 
     <ImageView
         android:id="@+id/imageview_daily_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_pan_fail"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -48,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp"
+
         android:text="HeartRate"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -79,7 +80,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:onClick="onBtnSetupBle"
-        android:text="connect Ble" />
+        android:text="connect Ble"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/textview_daily_exercise"
@@ -108,12 +110,48 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/textview_test_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="RESULT"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/textview_test_input_weight_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Expecting Weight:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+    <EditText
+        android:id="@+id/textview_test_input_weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"
+        android:inputType="numberDecimal"
+        android:text="10"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+    <Button
+        android:id="@+id/button_test_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="START"
+        android:onClick="onBtnStart"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/button_test_start_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="START NEW TEST"
+        android:onClick="onBtnStartNew"
         android:visibility="gone" />
 
     <Button
@@ -122,7 +160,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:clickable="false"
-        android:text="Confirm"
+        android:text="Continue"
+        android:onClick="onBtnConfirm"
         android:visibility="gone" />
 
     <Button

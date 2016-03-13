@@ -18,4 +18,8 @@ public class Constant {
     public final static int MODE_CHECK_IN = 1;
 
     public final static int REQUIRED_TEST_TIME=15;
+
+
+    public final static String TAG_CONFIRM="Confirm";
+    public final static String TAG_CONTINUE="Continue";
 }

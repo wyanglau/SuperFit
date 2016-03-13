@@ -1,6 +1,5 @@
 package ca.utoronto.ee1778.superfit.controller;
 
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -13,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -22,11 +20,10 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,11 +81,15 @@ public class DailyCheckinActivity extends Activity {
     private TextView setsTextView;
     private TextView repTextView;
     private TextView successTimes;
+    private TextView inputWeightTag;
+    private TextView resultTextview;
     private ImageView resultImageView;
 
+    private EditText inputWeight;
     private Button startNewTestBtn;
     private Button confirmBtn;
     private Button skipBtn;
+    private Button startBtn;
 
 
     private Button checkInButton;
@@ -109,6 +110,7 @@ public class DailyCheckinActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_checkin);
 
+        inputWeightTag = (TextView) findViewById(R.id.textview_test_input_weight_tag);
         heartRateTextView = (TextView) findViewById(R.id.textview_heartRate);
         angleTextview = (TextView) findViewById(R.id.textview_tile);
         exerciseTextview = (TextView) findViewById(R.id.textview_daily_exercise);
@@ -118,10 +120,12 @@ public class DailyCheckinActivity extends Activity {
         successTimes = (TextView) findViewById(R.id.testview_daily_success_times);
         exerciseService = ExerciseService.newInstance(this);
         checkInButton = (Button) findViewById(R.id.button_checkin);
-
+        startBtn = (Button) findViewById(R.id.button_test_start);
+        inputWeight = (EditText) findViewById(R.id.textview_test_input_weight);
         startNewTestBtn = (Button) findViewById(R.id.button_test_start_new);
         confirmBtn = (Button) findViewById(R.id.button_test_confirm);
         skipBtn = (Button) findViewById(R.id.button_test_skip);
+        resultTextview = (TextView) findViewById(R.id.textview_test_result);
 
 
         Intent intent = getIntent();
@@ -140,12 +144,55 @@ public class DailyCheckinActivity extends Activity {
             initScheduleView();
         } else {
             initTestView();
-            exerciseService.refresh();
+
         }
+
+
+    }
+
+    public void onBtnStart(View view) {
+        enableAllBtn(false);
+        resultTextview.setVisibility(View.GONE);
+        exerciseService.refresh();
+        String weight = inputWeight.getText().toString();
+        if (weight.isEmpty()) {
+            enableAllBtn(true);
+            Toast.makeText(this, "Please input an initial test weight.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        exerciseService.setNextWeight(Double.valueOf(weight));
+    }
+
+    private void enableAllBtn(Boolean enable) {
+
+
+        inputWeight.setEnabled(enable);
+        startBtn.setEnabled(enable);
+    }
+
+    public void onBtnStartNew(View view) {
+        exerciseService.refresh();
+        resultTextview.setVisibility(View.GONE);
+    }
+
+    public void onBtnConfirm(View view){
+      String text = confirmBtn.getText().toString();
+
+        if(text.equals(Constant.TAG_CONFIRM)){
+           System.out.println("RYAN:NEW:SCHEDULE");
+        }
+        else{
+            exerciseService.setFinished(false);
+        }
+
 
     }
 
     private void initTestView() {
+        inputWeight.setVisibility(View.VISIBLE);
+        inputWeightTag.setVisibility(View.VISIBLE);
+        startBtn.setVisibility(View.VISIBLE);
         successTimes.setVisibility(View.VISIBLE);
         startNewTestBtn.setVisibility(View.VISIBLE);
         confirmBtn.setVisibility(View.VISIBLE);
@@ -329,7 +376,7 @@ public class DailyCheckinActivity extends Activity {
                                 Log.d("DailyCheckinActivity", "Configuring service with uuid : " + s.getUuid().toString());
 
                                 if (SensorTagMovementProfile.isCorrectService(s)) {
-                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService);
+                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService,activity_mode);
                                     currentProfiles.add(mov);
                                     if (nrNotificationsOn < maxNotifications) {
                                         mov.configureService();
@@ -350,7 +397,7 @@ public class DailyCheckinActivity extends Activity {
 
 
                                 if (HeartRateMonitorProfile.isCorrectService(s)) {
-                                    HeartRateMonitorProfile devInfo = new HeartRateMonitorProfile(context, currentDevice, s, mBtLeService, bluetoothGatt,exerciseService);
+                                    HeartRateMonitorProfile devInfo = new HeartRateMonitorProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService);
                                     currentProfiles.add(devInfo);
                                     devInfo.configureService();
                                     Log.d("DailyCheckinActivity", "Found Heart Rate!");
@@ -400,9 +447,11 @@ public class DailyCheckinActivity extends Activity {
                                 if (p.isDataC(tempC)) {
                                     if (p instanceof SensorTagMovementProfile) {
                                         if (activity_mode == Constant.MODE_CHECK_IN) {
-                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, null);
+                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, null, null,null,null);
                                         } else {
-                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes);
+                                            if (!exerciseService.isFinished()) {
+                                                ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes, inputWeight,resultTextview,confirmBtn);
+                                            }
                                         }
                                     } else {
                                         p.didUpdateValueForCharacteristic(tempC, heartRateTextView);
@@ -552,8 +601,7 @@ public class DailyCheckinActivity extends Activity {
             } else {
                 // Start service discovery
                 if (!mServicesRdy && g != null) {
-                    if (mBtLeService.getNumServices() == 0)
-
+                    if (mBtLeService.getNumService(g) == 0)
                         discoverServices(g);
 
                     else {

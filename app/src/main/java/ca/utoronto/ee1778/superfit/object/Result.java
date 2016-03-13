@@ -13,12 +13,12 @@ public class Result implements Serializable {
      * 1: valid data
      */
     private boolean valid;
-    private int recommendWeight;
+    private double recommendWeight;
     private String errorMessage;
     private int age;
     private int weightOfUser;
     private boolean finished;
-    private double degree;
+    private Double degree;
     /**
      * for the recording of how much times the user can perform the exercise correctly
      */
@@ -43,17 +43,18 @@ public class Result implements Serializable {
         this.degree = calDegree(x, y, z);
     }
 
-    public double getDegree() {
+    public Double getDegree() {
         return degree;
     }
 
-    public void setDegree(double degree) {
+    public void setDegree(Double degree) {
         this.degree = degree;
     }
 
-    private double calDegree(double x, double y, double z){
+    private Double calDegree(double x, double y, double z){
         double epi = 0.00001;
-        if (y*y + z*z < epi) return 90;
+        if (x*x + y*y + z*z < epi) return null;
+        if (y*y + z*z < epi) return 90.0;
 
         double reusltInRadian = Math.atan(x/(y*y + z*z));
 
@@ -76,11 +77,11 @@ public class Result implements Serializable {
         this.result = result;
     }
 
-    public int getRecommendWeight() {
+    public double getRecommendWeight() {
         return recommendWeight;
     }
 
-    public void setRecommendWeight(int recommendWeight) {
+    public void setRecommendWeight(double recommendWeight) {
         this.recommendWeight = recommendWeight;
     }
 

@@ -29,9 +29,13 @@ public class ExerciseService {
     public int numOfEndRegionInOut;
     public double startDegree;
     public double endDegree;
-    public double thresholdDegree;
+    public double startThresholdDegree;
+    public double endThresholdDegree;
     public int thisRepResult; //0: not finish; 1: yes, passed; -1: failed
     public int numOfReps;
+
+    private Info _info;
+    private double nextWeight;
 
     /**
      * heart rate
@@ -46,13 +50,22 @@ public class ExerciseService {
         this.hr = hr;
     }
 
+    public void setNextWeight(double nextWeight) {
+        this.nextWeight = nextWeight;
+    }
+
+    public double getNextWeight() {
+        return this.nextWeight;
+    }
+
     public ExerciseService(Context context) {
         this.mContext = context;
         dbUtils = new DbUtils(mContext);
 
         startDegree = -90;
         endDegree = 90;
-        thresholdDegree = 25;
+        startThresholdDegree = 15;
+        endThresholdDegree = 45;
         totalPassed = 0;
         numOfReps = 15;
     }
@@ -95,30 +108,36 @@ public class ExerciseService {
 
         Result curData = result;
 
-        if (preData == null) {
+
+        if (preData == null && curData.getDegree()!=null) {
             preData = curData;
+            return false;
+        }else if (preData == null && curData.getDegree()==null){
             return false;
         }
 
 
         if (curData.getDegree() > 0) { //above horizontal
-            if (((endDegree - curData.getDegree()) < thresholdDegree) && ((endDegree - preData.getDegree()) > thresholdDegree)) {
+            if (((endDegree - curData.getDegree()) < endThresholdDegree) && ((endDegree - preData.getDegree()) > endThresholdDegree)) {
                 numOfEndRegionInOut++;
             }
 
-            if (endDegree - curData.getDegree() > thresholdDegree && endDegree - preData.getDegree() < thresholdDegree) {
+            if (endDegree - curData.getDegree() > endThresholdDegree && endDegree - preData.getDegree() < endThresholdDegree) {
                 numOfEndRegionInOut++;
             }
         } else {
 
 
-            if (((curData.getDegree() - startDegree) > thresholdDegree) && ((preData.getDegree() - startDegree) < thresholdDegree)) {
+            if (((curData.getDegree() - startDegree) > startThresholdDegree) && ((preData.getDegree() - startDegree) < startThresholdDegree)) {
 
                 numOfStartRegionInOut++;
             }
 
-            if (((curData.getDegree() - startDegree) < thresholdDegree) && ((preData.getDegree() - startDegree) > thresholdDegree)) {
-                numOfStartRegionInOut++;
+            if (((curData.getDegree() - startDegree) < startThresholdDegree) && ((preData.getDegree() - startDegree) > startThresholdDegree)) {
+
+                if (numOfStartRegionInOut==1) {
+                    numOfStartRegionInOut++;
+                }
             }
 
             System.out.println("Ryan:inout:starttime : start = " + numOfStartRegionInOut + "  currentdegree:" + curData.getDegree() + "  preDeg:" + preData.getDegree());
@@ -145,21 +164,33 @@ public class ExerciseService {
         if (totalPassed >= 15) {
 
 
-            //result.setRecommendWeight(12); //calculate the weight and push into result object
+            if (_info == null) {
+                _info = new Info(getNextWeight(), getHr(), curData.getAge());
+            } else {
+                _info.setCurWeight(getNextWeight());
+            }
 
-
+            double recommeded = _info.calculateWeight();
+            setNextWeight(recommeded);
             preData = null;
             totalPassed = 0;
             numOfStartRegionInOut = 0;
             numOfEndRegionInOut = 0;
             thisRepResult = 0;
-            return true;
+            isFinished = true;
+            if (_info.getIsFinish()) {
+                result.setRecommendWeight(recommeded); //calculate the weight and push into result object
+                return true;
+            }
+            result.setRecommendWeight(recommeded);
+            return false;
         }
 
         preData = curData;
 
         return false;
     }
+
 
     public void recommend(Result result) {
 
@@ -220,6 +251,14 @@ public class ExerciseService {
 
     public void refresh() {
         isFinished = false;
+
+
+        preData = null;
+        totalPassed = 0;
+        numOfStartRegionInOut = 0;
+        numOfEndRegionInOut = 0;
+        thisRepResult = 0;
+
     }
 
     public int getSuc_cnt() {
@@ -236,5 +275,67 @@ public class ExerciseService {
 
     public void setFail_cnt(int fail_cnt) {
         this.fail_cnt = fail_cnt;
+    }
+
+    private class Info {
+        double _preWeight;
+        double _curWeight;
+        double _hr;
+        double _age;
+        boolean _isFinish;
+
+        Info(double curWeight, double hr, double age) {
+            _curWeight = curWeight;
+            _hr = hr;
+            _age = age;
+            _preWeight = 0;
+            _isFinish = false;
+        }
+
+        boolean getIsFinish() {
+            return this._isFinish;
+        }
+
+        void setCurWeight(double newCurWeight) {
+            _curWeight = newCurWeight;
+        }
+
+        void setHr(double newHr) {
+            _hr = newHr;
+        }
+
+        void clear() {
+            _preWeight = 0;
+            _hr = 0;
+            _isFinish = false;
+        }
+
+        double calculateWeight() {
+
+            double mhr = _hr / (220 - _age);
+
+            if (mhr >= 0.625 && mhr <= 0.675) {
+                _preWeight = _curWeight;
+                _isFinish = true;
+                return _curWeight * 1.5;
+            } else if (mhr < 0.625) {
+                if (_preWeight > _curWeight) {
+                    _isFinish = true;
+                    return (_preWeight + _curWeight) * 1.5 / 2;
+                }
+
+                _preWeight = _curWeight;
+                return _curWeight + 5;
+            }
+
+            if (_preWeight < _curWeight && (_curWeight - _preWeight) < 6) {
+                _isFinish = true;
+                return (_preWeight + _curWeight) * 1.5 / 2;
+            }
+
+            _preWeight = _curWeight;
+            return _curWeight - 5;
+        }
+
     }
 }

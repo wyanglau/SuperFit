@@ -55,16 +55,21 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
 import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.common.BluetoothLeService;
+import ca.utoronto.ee1778.superfit.common.Constant;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
 import ca.utoronto.ee1778.superfit.common.Sensor;
 import ca.utoronto.ee1778.superfit.common.SensorTagGatt;
@@ -86,11 +91,13 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
     private ExerciseService exerciseService;
     private UserService userService;
     private User user;
+    private int testMode;
 
-    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt, ExerciseService exerciseService) {
+    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt, ExerciseService exerciseService, int testMode) {
         super(con, device, service, controller, mBluetoothGatt);
 
         this.exerciseService = exerciseService;
+        this.testMode = testMode;
         userService = new UserService(con);
         user = userService.getUser();
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
@@ -158,8 +165,10 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
     }
 
-    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View movementTextview, View resultImage, View totalPass
+    public void didUpdateValueForCharacteristic(BluetoothGattCharacteristic c, View movementTextview, View resultImage, View totalPass, View weight, View resultText, View confirmBtn
     ) {
+
+
         byte[] value = c.getValue();
         if (c.equals(this.dataC)) {
             Log.d("SensorTagMovementProf", "Ryan:Movement:----Getting Movement data------");
@@ -169,20 +178,26 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             float X = (float) v.x;
             float Y = (float) v.y;
             float Z = (float) v.z;
-            double current_angle = exerciseService.calculatePitch(v.x, v.y, v.z);
+            Result result = new Result(X, Y, Z);
+            result.setAge(user.getAge());
+            Double current_angle = result.getDegree();
             Log.d("SensorTagMovementProf", "Ryan:approximate:new:angle: " + current_angle);
             Log.d("SensorTagMovementProf", "Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
             Log.d("SensorTagMovementProf", "Ryan:Movement:Acc:x=" + v.x + " y=" + v.y + " z=" + v.z);
 
-            String angle_text = String.valueOf(current_angle);
+            String angle_text = null;
+            if (current_angle == null) {
+                angle_text = "N/A";
+            } else {
+                angle_text = String.valueOf(current_angle);
+            }
             if (angle_text.length() > 7) {
                 angle_text = angle_text.substring(0, 7);
             }
             ((TextView) movementTextview).setText(angle_text);
-            Result result = new Result(X, Y, Z);
-            result.setAge(user.getAge());
 
-            boolean jiaxinFinished = exerciseService.tester(result);
+
+            boolean jiaxinSaidItsOk = exerciseService.tester(result);
 
             boolean rt = exerciseService.thisRepResult == 1 ? true : false;
 
@@ -198,12 +213,31 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
                 ((ImageView) resultImage).setImageResource(R.drawable.ic_question_mark);
             }
 
-            if (totalPass != null) {
-                ((TextView) totalPass).setText(String.valueOf(exerciseService.totalPassed));
-            }
 
-            if (jiaxinFinished) {
-                exerciseService.setFinished(true);
+            if (testMode == Constant.MODE_TEST) {
+                ((TextView) totalPass).setText(String.valueOf(exerciseService.totalPassed));
+
+
+                if (exerciseService.isFinished()) {
+
+                    double recommedWeight = result.getRecommendWeight();
+                    ((EditText) weight).setText(String.valueOf(recommedWeight));
+                    resultText.setVisibility(View.VISIBLE);
+                    if (jiaxinSaidItsOk) {
+                        ((TextView) resultText).setText("Test Passed!");
+                        ((TextView) resultText).setTextColor(Color.GREEN);
+                        ((Button) confirmBtn).setText(Constant.TAG_CONFIRM);
+                        ((Button) confirmBtn).setClickable(true);
+
+                    } else {
+                        ((Button) confirmBtn).setClickable(true);
+                        ((Button) confirmBtn).setText(Constant.TAG_CONTINUE);
+                        ((TextView) resultText).setText("You should try harder.");
+                        ((TextView) resultText).setTextColor(Color.RED);
+
+                    }
+
+                }
             }
 
 //            if (result.isFinished()) {

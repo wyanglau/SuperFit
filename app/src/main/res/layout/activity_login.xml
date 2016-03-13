@@ -7,40 +7,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".controller.LoginActivity">
+    tools:context=".controller.LoginActivity"
+   >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView7"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="85dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView8"
-        android:layout_below="@+id/textView7"
-        android:layout_alignParentStart="true" />
-    <com.github.lzyzsd.circleprogress.DonutProgress
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/ddd"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_gravity="center_horizontal"
-        custom:donut_finished_color="@android:color/holo_green_dark"
-        custom:donut_finished_stroke_width="10dp"
-        custom:donut_inner_bottom_text="Exercise"
-        custom:donut_inner_bottom_text_color="@android:color/holo_green_dark"
-        custom:donut_inner_bottom_text_size="20dp"
-        custom:donut_progress="70"
-        custom:donut_text_color="@android:color/holo_green_dark"
-        custom:donut_unfinished_stroke_width="9dp"
-        android:layout_alignTop="@+id/textView7"
-        android:layout_toEndOf="@+id/textView7" />
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop"
+    android:background="@drawable/bg_login"/>
 </RelativeLayout>

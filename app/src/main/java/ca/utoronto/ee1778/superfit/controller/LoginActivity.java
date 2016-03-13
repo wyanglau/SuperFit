@@ -37,9 +37,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
+
+
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
         initBleService();
         detectUser();
-
     }
 
     private void initBleService() {

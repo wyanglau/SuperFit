@@ -1,5 +1,6 @@
 package ca.utoronto.ee1778.superfit.DAO;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -56,30 +57,7 @@ public class DbUtils {
         }
     }
 
-    //    public void deleteAll() {
-//
-//        try {
-//            w.lock();
-//            db = dbHelper.getWritableDatabase();
-//            db.beginTransaction();
-//
-//            String delAllSql = "DELETE FROM " + DbHelper.TABLE_NAME + ";";
-//            String refreshSql = "UPDATE sqlite_sequence set seq=0 where name='" + DbHelper.TABLE_NAME + "'";
-//            db.execSQL(delAllSql);
-//            db.execSQL(refreshSql);
-//            db.setTransactionSuccessful();
-//        } catch (Exception e) {
-//            Log.e(LOG_TAG, e.getMessage());
-//        } finally {
-//            w.unlock();
-//            if (db != null) {
-//                db.endTransaction();
-//                db.close();
-//            }
-//        }
-//
-//    }
-//
+
     public List<User> getAllUser() {
         List<User> users = null;
         Cursor cursor = null;
@@ -176,7 +154,7 @@ public class DbUtils {
             cursor = db.query(DbHelper.TABLE_NAME_DAILY,
                     new String[]{DbHelper.TABLE_DAILY_COL_EXERCISE, DbHelper.TABLE_DAILY_COL_COMRATE,
                             DbHelper.TABLE_DAILY_COL_DATE, DbHelper.TABLE_DAILY_COL_WEIGHT,
-                            DbHelper.TABLE_DAILY_COL_REP, DbHelper.TABLE_DAILY_COL_SET},
+                            DbHelper.TABLE_DAILY_COL_REP, DbHelper.TABLE_DAILY_COL_SET, DbHelper.TABLE_DAILY_COL_SUCCESS, DbHelper.TABLE_DAILY_COL_FAILED},
                     whereClaus, whereArgs, null, null, DbHelper.TABLE_DAILY_COL_DATE + " DESC");
 
             if (cursor.getCount() > 0) {
@@ -189,6 +167,8 @@ public class DbUtils {
                             cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_REP)),
                             cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_SET)));
 
+                    exercise.setSuccess_times(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_SUCCESS)));
+                    exercise.setFailed_times(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_FAILED)));
                     exercise.setCompletionRate(cursor.getInt(cursor.getColumnIndex(DbHelper.TABLE_DAILY_COL_COMRATE)));
                     exercises.add(exercise);
                 }
@@ -275,6 +255,7 @@ public class DbUtils {
                 schedule.setWeight(cursor.getDouble(cursor.getColumnIndex(DbHelper.TABLE_SCHEDULE_COL_WEIGHT)));
 
             }
+
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         } finally {
@@ -289,46 +270,34 @@ public class DbUtils {
             return schedule;
         }
     }
-//
-//
-//    }
-//
-//    public int write(List<Celebrity> celebrities) {
-//        int count = 0;
-//        db = dbHelper.getWritableDatabase();
-//        w.lock();
-//        try {
-//            db.beginTransaction();
-//            for (Celebrity celebrity : celebrities) {
-//                try {
-//                    String sql = "INSERT INTO " + DbHelper.TABLE_NAME + " (name, biography, image_url, visibility,local_path) " +
-//                            "values ('" + celebrity.getName() + "','" + celebrity.getBio() + "','" + celebrity.getURL() + "','" + (celebrity.isVisible() ? 1 : 0) + "','" + celebrity.getLocalImagePath() + "');";
-//                    db.execSQL(sql);
-//                    count++;
-//                } catch (Exception e) {
-//                    Log.e(LOG_TAG, e.getMessage(), e);
-//                    continue;
-//                }
-//            }
-//            db.setTransactionSuccessful();
-//
-//        } catch (Exception e) {
-//            Log.e(LOG_TAG, e.getMessage(), e);
-//        } finally {
-//
-//            w.unlock();
-//            if (db != null) {
-//                db.endTransaction();
-//                db.close();
-//            }
-//            return count;
-//        }
-//
-//    }
-//
-//
-//    public void exsits() {
-//
-//    }
+
+    public void updateSchedule(Long id, double weight, int reps, int sets) {
+
+        db = dbHelper.getWritableDatabase();
+        w.lock();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DbHelper.TABLE_SCHEDULE_COL_ID, id);
+            contentValues.put(DbHelper.TABLE_SCHEDULE_COL_WEIGHT, weight);
+            contentValues.put(DbHelper.TABLE_SCHEDULE_COL_REP, reps);
+            contentValues.put(DbHelper.TABLE_SCHEDULE_COL_NUM_OF_SET, sets);
+
+            String whereClaus = DbHelper.TABLE_SCHEDULE_COL_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            db.update(DbHelper.TABLE_NAME_SCHEDULE, contentValues, whereClaus, whereArgs);
+
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+        } finally {
+
+            w.unlock();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+
+    }
+
 
 }

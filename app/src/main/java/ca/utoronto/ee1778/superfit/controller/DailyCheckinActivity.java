@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.common.BluetoothGATTDefines;
@@ -51,7 +52,6 @@ import ca.utoronto.ee1778.superfit.utils.PreferenceWR;
 public class DailyCheckinActivity extends Activity {
 
 
-    private Button checkInButton;
     private ExerciseService exerciseService;
     private User user;
 
@@ -83,8 +83,19 @@ public class DailyCheckinActivity extends Activity {
     private TextView exerciseTextview;
     private TextView setsTextView;
     private TextView repTextView;
+    private TextView successTimes;
     private ImageView resultImageView;
+
+    private Button startNewTestBtn;
+    private Button confirmBtn;
+    private Button skipBtn;
+
+
+    private Button checkInButton;
+
     private ScheduleService scheduleService;
+
+    private int activity_mode;
 
     public DailyCheckinActivity() {
     }
@@ -104,13 +115,18 @@ public class DailyCheckinActivity extends Activity {
         setsTextView = (TextView) findViewById(R.id.textview_daily_sets);
         repTextView = (TextView) findViewById(R.id.textview_daily_rep);
         resultImageView = (ImageView) findViewById(R.id.imageview_daily_result);
-
+        successTimes = (TextView) findViewById(R.id.testview_daily_success_times);
         exerciseService = ExerciseService.newInstance(this);
         checkInButton = (Button) findViewById(R.id.button_checkin);
-        user = (User) getIntent().getSerializableExtra(Constant.EXTRAS_TAG_USER);
+
+        startNewTestBtn = (Button) findViewById(R.id.button_test_start_new);
+        confirmBtn = (Button) findViewById(R.id.button_test_confirm);
+        skipBtn = (Button) findViewById(R.id.button_test_skip);
 
 
         Intent intent = getIntent();
+        activity_mode = intent.getIntExtra(Constant.EXTRAS_TAG_TEST_MODE, 1);
+        user = (User) intent.getSerializableExtra(Constant.EXTRAS_TAG_USER);
 
         // BLE
         mBtLeService = BluetoothLeService.getInstance();
@@ -118,11 +134,30 @@ public class DailyCheckinActivity extends Activity {
         gatts = mBtLeService.getGatts();
 
         scheduleService = new ScheduleService(this);
-        initView();
+
+
+        if (activity_mode == Constant.MODE_CHECK_IN) {
+            initScheduleView();
+        } else {
+            initTestView();
+            exerciseService.refresh();
+        }
 
     }
 
-    private void initView() {
+    private void initTestView() {
+        successTimes.setVisibility(View.VISIBLE);
+        startNewTestBtn.setVisibility(View.VISIBLE);
+        confirmBtn.setVisibility(View.VISIBLE);
+        skipBtn.setVisibility(View.VISIBLE);
+    }
+
+    private void initScheduleView() {
+        exerciseTextview.setVisibility(View.VISIBLE);
+        setsTextView.setVisibility(View.VISIBLE);
+        repTextView.setVisibility(View.VISIBLE);
+        checkInButton.setVisibility(View.VISIBLE);
+
         Schedule schedule = scheduleService.findSchedule();
         exerciseTextview.setText(schedule.getExercise());
         setsTextView.setText(String.valueOf(schedule.getSets()));
@@ -131,20 +166,40 @@ public class DailyCheckinActivity extends Activity {
 
     public void recordAndReturn(View view) {
 
-        SimpleDateFormat sDateFormat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
         String date = sDateFormat.format(new java.util.Date());
         // --test data
         Exercise exercise = new Exercise("wanghaha", date, 100, 1000, 5);
         exercise.setLogoId(R.drawable.cat);
-        exercise.setCompletionRate(99);
+
+        Random r = new Random();
+        int Low = 10;
+        int High = 100;
+        int Result = r.nextInt(High - Low) + Low;
+
+        exercise.setCompletionRate(Result);
         exercise.setScheduleId(Long.valueOf(1));
-        exercise.setFailed_times(10);
-        exercise.setSuccess_times(90);
+
+        Random r2 = new Random();
+        int Low_2 = 60;
+        int High_2 = 100;
+        int Result_2 = r2.nextInt(High_2 - Low_2) + Low_2;
+
+        exercise.setFailed_times(100 - Result_2);
+        exercise.setSuccess_times(Result_2);
 
         exerciseService.record(exercise);
 
 
+        this.finish();
+    }
 
+    public void onBtnSkip(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.EXTRAS_TAG_USER, user);
+        intent.putExtras(bundle);
+        startActivity(intent);
         this.finish();
     }
 
@@ -273,7 +328,7 @@ public class DailyCheckinActivity extends Activity {
                                 Log.d("DailyCheckinActivity", "Configuring service with uuid : " + s.getUuid().toString());
 
                                 if (SensorTagMovementProfile.isCorrectService(s)) {
-                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt,exerciseService);
+                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService);
                                     currentProfiles.add(mov);
                                     if (nrNotificationsOn < maxNotifications) {
                                         mov.configureService();
@@ -334,20 +389,23 @@ public class DailyCheckinActivity extends Activity {
                 byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                 String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
                 //Log.d("DailyCheckinActivity","Got Characteristic : " + uuidStr);
-                for (int ii = 0; ii < charList.size(); ii++) {
-                    BluetoothGattCharacteristic tempC = charList.get(ii);
-                    if ((tempC.getUuid().toString().equals(uuidStr))) {
-                        for (int jj = 0; jj < mProfiles.size(); jj++) {
-                            GenericBluetoothProfile p = mProfiles.get(jj);
-                            if (p.isDataC(tempC)) {
-                                if (p instanceof SensorTagMovementProfile) {
-                                    ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView);
-                                } else {
-                                    p.didUpdateValueForCharacteristic(tempC, heartRateTextView);
+
+                if (!exerciseService.isFinished()) {
+                    for (int ii = 0; ii < charList.size(); ii++) {
+                        BluetoothGattCharacteristic tempC = charList.get(ii);
+                        if ((tempC.getUuid().toString().equals(uuidStr))) {
+                            for (int jj = 0; jj < mProfiles.size(); jj++) {
+                                GenericBluetoothProfile p = mProfiles.get(jj);
+                                if (p.isDataC(tempC)) {
+                                    if (p instanceof SensorTagMovementProfile) {
+                                        ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView);
+                                    } else {
+                                        p.didUpdateValueForCharacteristic(tempC, heartRateTextView);
+                                    }
                                 }
                             }
+                            break;
                         }
-                        break;
                     }
                 }
 
@@ -438,8 +496,8 @@ public class DailyCheckinActivity extends Activity {
         //View should be started again from scratch
         //Ryan: try to unrelease the profile. Dont know what will happen; but in fact it is not right.
         this.mProfiles = null;
-        finishActivity(PREF_ACT_REQ);
-        finishActivity(FWUPDATE_ACT_REQ);
+//        finishActivity(PREF_ACT_REQ);
+//        finishActivity(FWUPDATE_ACT_REQ);
     }
 
     public boolean isEnabledByPrefs(String prefName) {
@@ -538,5 +596,9 @@ public class DailyCheckinActivity extends Activity {
 
         super.onStop();
         // mBtLeService.closeAllGatts();
+    }
+
+    public void toastit(Context context) {
+        Toast.makeText(context, "haha", Toast.LENGTH_SHORT).show();
     }
 }

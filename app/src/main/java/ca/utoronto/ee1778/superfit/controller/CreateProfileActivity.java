@@ -53,6 +53,7 @@ public class CreateProfileActivity extends AppCompatActivity {
         bundle.putSerializable(Constant.EXTRAS_TAG_USER, user);
         intent.putExtras(bundle);
         startActivity(intent);
+        finish();
 
     }
 

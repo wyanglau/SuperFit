@@ -14,5 +14,6 @@
 
 
     <string-array name="device_filter"><!--<item>SensorTag</item><item>SensorTag2</item><item>CC2650 SensorTag</item>--></string-array>
+    <string name="title_activity_edit_exercise">EditExerciseActivity</string>
 
 </resources>

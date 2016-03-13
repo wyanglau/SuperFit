@@ -329,11 +329,11 @@ public class ScanView extends Fragment {
 
             ImageView iv = (ImageView) vg.findViewById(R.id.devImage);
             if (name.equals("SensorTag2") || name.equals("CC2650 SensorTag"))
-                iv.setImageResource(R.drawable.sensortag2_300);
+                iv.setImageResource(R.drawable.icon_ti);
             else
 
             {
-                iv.setImageResource(R.drawable.sensortag_300);
+                iv.setImageResource(R.drawable.icon_wahoo);
             }
 
             ImageView imageView = (ImageView) vg.findViewById(R.id.ble_stat);

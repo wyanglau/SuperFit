@@ -9,21 +9,32 @@ public class Result implements Serializable {
 
     private boolean result;
     /**
-     *  0: invalid data \n
-     *  1: valid data
+     * 0: invalid data \n
+     * 1: valid data
      */
-    private boolean active;
+    private boolean valid;
     private int recommendWeight;
     private String errorMessage;
     private int age;
     private int weightOfUser;
     private boolean finished;
+
+    /**
+     * for the recording of how much times the user can perform the exercise correctly
+     */
     private int successTimes;
+
 
     private double hr;
     private double x;
     private double y;
     private double z;
+    /**
+     * for record purpose (every pulse of data)to display the stack bar chart.
+     */
+    private int fail_cnt;
+    private int suc_cnt;
+
 
     public Result(double x, double y, double z) {
         this.x = x;
@@ -103,12 +114,12 @@ public class Result implements Serializable {
         this.weightOfUser = weightOfUser;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isValid() {
+        return valid;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 
     public double getHr() {
@@ -125,6 +136,22 @@ public class Result implements Serializable {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public int getFail_cnt() {
+        return fail_cnt;
+    }
+
+    public void setFail_cnt(int fail_cnt) {
+        this.fail_cnt = fail_cnt;
+    }
+
+    public int getSuc_cnt() {
+        return suc_cnt;
+    }
+
+    public void setSuc_cnt(int suc_cnt) {
+        this.suc_cnt = suc_cnt;
     }
 
     @Override

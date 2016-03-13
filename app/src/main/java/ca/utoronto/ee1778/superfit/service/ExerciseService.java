@@ -16,9 +16,11 @@ public class ExerciseService {
 
     private Context mContext;
     private DbUtils dbUtils;
-
+    private boolean isFinished;
     private static ExerciseService mTHis;
 
+    private int suc_cnt = 0;
+    private int fail_cnt = 0;
 
 
     public ExerciseService(Context context) {
@@ -26,8 +28,8 @@ public class ExerciseService {
         dbUtils = new DbUtils(mContext);
     }
 
-    public static ExerciseService newInstance(Context context){
-        if(mTHis==null){
+    public static ExerciseService newInstance(Context context) {
+        if (mTHis == null) {
             mTHis = new ExerciseService(context);
         }
         return mTHis;
@@ -46,7 +48,15 @@ public class ExerciseService {
     }
 
     public void record(Exercise exercise) {
+        if (exercise.getSuccess_times() == 0) {
+            exercise.setSuccess_times(suc_cnt);
+        }
+        if (exercise.getFailed_times() == 0) {
+            exercise.setFailed_times(fail_cnt);
+        }
 
+        suc_cnt = 0;
+        fail_cnt = 0;
         dbUtils.recordDaily(exercise.getDate(),
                 exercise.getName(), exercise.getCompletionRate(),
                 exercise.getWeight(), exercise.getNumOfSet(), exercise.getRepetition(), exercise.getScheduleId(), exercise.getSuccess_times(), exercise.getFailed_times());
@@ -54,6 +64,7 @@ public class ExerciseService {
 
     public boolean tester(Result result) {
         double rt = calculatePitch(result.getX(), result.getY(), result.getZ());
+        result.setValid(true);
         if (rt > 0 && rt < 90) {
 
             return true;
@@ -63,8 +74,7 @@ public class ExerciseService {
     }
 
 
-    public void recommend(Result result){
-
+    public void recommend(Result result) {
 
 
     }
@@ -86,7 +96,7 @@ public class ExerciseService {
         int total = 0;
         int tmp = 0;
 
-        if(exercises.size()==0){
+        if (exercises.size() == 0) {
             return 0;
         }
         for (Exercise exercise : exercises) {
@@ -103,12 +113,41 @@ public class ExerciseService {
 
         List<Exercise> exercises = dbUtils.queryCurrentExerciseRecords(scheduleId);
 
-        if(exercises==null){
+        if (exercises == null) {
             exercises = new ArrayList<>();
 
         }
         return exercises;
 
 
+    }
+
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean isFinished) {
+        this.isFinished = isFinished;
+    }
+
+    public void refresh() {
+        isFinished = false;
+    }
+
+    public int getSuc_cnt() {
+        return suc_cnt;
+    }
+
+    public void setSuc_cnt(int suc_cnt) {
+        this.suc_cnt = suc_cnt;
+    }
+
+    public int getFail_cnt() {
+        return fail_cnt;
+    }
+
+    public void setFail_cnt(int fail_cnt) {
+        this.fail_cnt = fail_cnt;
     }
 }

@@ -1,11 +1,11 @@
 /**************************************************************************************************
  * Filename:       SensorTagMovementProfile.java
- * <p/>
+ * <p>
  * Copyright (c) 2013 - 2015 Texas Instruments Incorporated
- * <p/>
+ * <p>
  * All rights reserved not granted herein.
  * Limited License.
- * <p/>
+ * <p>
  * Texas Instruments Incorporated grants a world-wide, royalty-free,
  * non-exclusive license under copyrights and patents it now or hereafter
  * owns or controls to make, have made, use, import, offer to sell and sell ("Utilize")
@@ -14,32 +14,32 @@
  * to Utilize the software alone.  The patent license shall not apply to any combinations which
  * include this software, other than combinations with devices manufactured by or for TI ('TI Devices').
  * No hardware patent is licensed hereunder.
- * <p/>
+ * <p>
  * Redistributions must preserve existing copyright notices and reproduce this license (including the
  * above copyright notice and the disclaimer and (if applicable) source code license limitations below)
  * in the documentation and/or other materials provided with the distribution
- * <p/>
+ * <p>
  * Redistribution and use in binary form, without modification, are permitted provided that the following
  * conditions are met:
- * <p/>
+ * <p>
  * No reverse engineering, decompilation, or disassembly of this software is permitted with respect to any
  * software provided in binary form.
  * any redistribution and use are licensed by TI for use only with TI Devices.
  * Nothing shall obligate TI to provide you with source code for the software licensed and provided to you in object code.
- * <p/>
+ * <p>
  * If software source code is provided to you, modification and redistribution of the source code are permitted
  * provided that the following conditions are met:
- * <p/>
+ * <p>
  * any redistribution and use of the source code, including any resulting derivative works, are licensed by
  * TI for use only with TI Devices.
  * any redistribution and use of any object code compiled from the source code and any resulting derivative
  * works, are licensed by TI for use only with TI Devices.
- * <p/>
+ * <p>
  * Neither the name of Texas Instruments Incorporated nor the names of its suppliers may be used to endorse or
  * promote products derived from this software without specific prior written permission.
- * <p/>
+ * <p>
  * DISCLAIMER.
- * <p/>
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY TI AND TI'S LICENSORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
  * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  * IN NO EVENT SHALL TI AND TI'S LICENSORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -55,22 +55,21 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
 import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.common.BluetoothLeService;
-import ca.utoronto.ee1778.superfit.common.GattInfo;
 import ca.utoronto.ee1778.superfit.common.GenericBluetoothProfile;
 import ca.utoronto.ee1778.superfit.common.Sensor;
 import ca.utoronto.ee1778.superfit.common.SensorTagGatt;
-import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.controller.DailyCheckinActivity;
+import ca.utoronto.ee1778.superfit.controller.MainActivity;
 import ca.utoronto.ee1778.superfit.object.Result;
 import ca.utoronto.ee1778.superfit.service.ExerciseService;
 import ca.utoronto.ee1778.superfit.utils.Point3D;
@@ -84,8 +83,9 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
     private ExerciseService exerciseService;
 
-    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt,ExerciseService exerciseService) {
+    public SensorTagMovementProfile(Context con, BluetoothDevice device, BluetoothGattService service, BluetoothLeService controller, BluetoothGatt mBluetoothGatt, ExerciseService exerciseService) {
         super(con, device, service, controller, mBluetoothGatt);
+
         this.exerciseService = exerciseService;
         List<BluetoothGattCharacteristic> characteristics = this.mBTService.getCharacteristics();
 
@@ -156,7 +156,7 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
     ) {
         byte[] value = c.getValue();
         if (c.equals(this.dataC)) {
-            System.out.println("Ryan:Movement:-------------------Getting Movement data----------------------------------");
+            Log.d("SensorTagMovementProf", "Ryan:Movement:----Getting Movement data------");
             Point3D v;
             v = Sensor.MOVEMENT_ACC.convert(value);
 
@@ -164,48 +164,36 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             float Y = (float) v.y;
             float Z = (float) v.z;
             double current_angle = exerciseService.calculatePitch(v.x, v.y, v.z);
+            Log.d("SensorTagMovementProf", "Ryan:approximate:new:angle: " + current_angle);
+            Log.d("SensorTagMovementProf", "Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
+            Log.d("SensorTagMovementProf", "Ryan:Movement:Acc:x=" + v.x + " y=" + v.y + " z=" + v.z);
 
-            ((TextView) movementTextview).setText(String.valueOf(current_angle));
+           String angle_text = String.valueOf(current_angle);
+            if(angle_text.length()>7){
+               angle_text= angle_text.substring(0,7);
+            }
+            ((TextView) movementTextview).setText(angle_text);
             Result result = new Result(X, Y, Z);
-            ((ImageView) resultImage).setImageResource(exerciseService.tester(result) ? R.drawable.ic_bike_success : R.drawable.ic_pan_fail);
+            boolean rt = exerciseService.tester(result);
+            if (result.isValid()) {
 
-           if(result.isActive()){
-
-           }
-            if(result.isFinished()){
-                //1. set 一个变量 测试完了
-                //2. 更新ACTIVITY的界面
-                result.getRecommendWeight(); //把这个WEIGHT推荐给用户
-                //3. 存储当前的schedule
-
+                ((ImageView) resultImage).setImageResource(rt ? R.drawable.ic_bike_success : R.drawable.ic_pan_fail);
+                if (rt) {
+                    exerciseService.setSuc_cnt(exerciseService.getSuc_cnt() + 1);
+                } else {
+                    exerciseService.setFail_cnt(exerciseService.getFail_cnt() + 1);
+                }
+            } else {
+                ((ImageView) resultImage).setImageResource(R.drawable.ic_question_mark);
             }
 
-            System.out.println("Ryan:approximate:new:angle: " + current_angle);
-            System.out.println("Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
-            System.out.println("Ryan:Movement:Acc:x=" + v.x + " y=" + v.y + " z=" + v.z);
+            if (result.isFinished()) {
+                exerciseService.setFinished(true);
+            }
+
 
         }
     }
 
 
-//    @Override
-//    public Map<String,String> getMQTTMap() {
-//        System.out.println("Ryan:Movement:------------------Getting MQTTMAP-----------------------------------");
-//        Point3D v = Sensor.MOVEMENT_ACC.convert(this.dataC.getValue());
-//        Map<String,String> map = new HashMap<String, String>();
-//        map.put("acc_x", String.format("%.2f", v.x));
-//        map.put("acc_y", String.format("%.2f", v.y));
-//        map.put("acc_z", String.format("%.2f", v.z));
-//        v = Sensor.MOVEMENT_GYRO.convert(this.dataC.getValue());
-//        map.put("gyro_x", String.format("%.2f", v.x));
-//        map.put("gyro_y", String.format("%.2f", v.y));
-//        map.put("gyro_z", String.format("%.2f", v.z));
-//        v = Sensor.MOVEMENT_MAG.convert(this.dataC.getValue());
-//        map.put("compass_x", String.format("%.2f", v.x));
-//        map.put("compass_y", String.format("%.2f", v.y));
-//        map.put("compass_z", String.format("%.2f", v.z));
-//        System.out.println("Ryan:Movement:MQTTMAP" + map.toString());
-//        System.out.println("Ryan:Movement:-----------------------------------------------------");
-//        return map;
-//    }
 }

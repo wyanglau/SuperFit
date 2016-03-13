@@ -30,14 +30,15 @@ public class StackBarController {
     private final TextView mLegendOneGreen;
     private final StackBarChartView mChart;
 
-    private final String[] mLabels = {"6.17", "6.18", "6.19", "6.20", "6.21", "6.22", "6.23", "6.17", "6.18", "6.19"};
-    private final float[][] mValuesOne = {
-            {99f, 80f, 80f, 90f, 77f, 45f, 60f, 70f, 70f, 90f},
-            {1f, 20f, 20f, 10f, 23f, 55f, 40f, 30f, 30f, 10f}};
+//    private final String[] mLabels = {"6.17", "6.18", "6.19", "6.20", "6.21", "6.22", "6.23", "6.17", "6.18", "6.19"};
+//    private final float[][] mValuesOne = {
+//            {99f, 80f, 80f, 90f, 77f, 45f, 60f, 70f, 70f, 90f},
+//            {1f, 20f, 20f, 10f, 23f, 55f, 40f, 30f, 30f, 10f}};
 
     private static int maxDisplay = 10;
     private BarSet stackBarSet_success;
     private BarSet stackBarSet_failure;
+    private int[] order;
 
     public StackBarController(View view) {
         mChart = (StackBarChartView) view.findViewById(R.id.stackbar_history);
@@ -45,12 +46,17 @@ public class StackBarController {
         mLegendOneGreen = (TextView) view.findViewById(R.id.legend_success);
     }
 
-    public void init() {
-        show();
+    public void init(String[] mLabels, float[] successes, float[] failures) {
+        order = new int[mLabels.length];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+
+        show(mLabels, successes, failures);
     }
 
     // Runnable action can be set as end action, but we dont need it here.
-    public void show() {
+    public void show(String[] mLabels, float[] successes, float[] failures) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             mChart.setOnEntryClickListener(new OnEntryClickListener() {
@@ -96,12 +102,12 @@ public class StackBarController {
         thresPaint.setAntiAlias(true);
         thresPaint.setStrokeWidth(Tools.fromDpToPx(.75f));
 
-        stackBarSet_success = new BarSet(mLabels, mValuesOne[0]);
+        stackBarSet_success = new BarSet(mLabels, successes);
         stackBarSet_success.setColor(Color.parseColor("#a1d949"));
         mChart.addData(stackBarSet_success);
 
 
-        stackBarSet_failure = new BarSet(mLabels, mValuesOne[1]);
+        stackBarSet_failure = new BarSet(mLabels, failures);
         stackBarSet_failure.setColor(Color.parseColor("#ff7a57"));
         mChart.addData(stackBarSet_failure);
 
@@ -114,7 +120,7 @@ public class StackBarController {
                 .setYLabels(YController.LabelPosition.NONE)
                 .setValueThreshold(89.f, 89.f, thresPaint);
 
-        int[] order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
         mChart.show(new Animation()
                         .setOverlap(.5f, order)
                 // .setEndAction(action)
@@ -129,12 +135,9 @@ public class StackBarController {
 //            mChart.updateValues(1, failures);
 
 
-
         mChart.updateValues(0, successes);
 
         mChart.updateValues(1, failures);
-
-
 
 
         mChart.notifyDataUpdate();
@@ -143,7 +146,7 @@ public class StackBarController {
 
     public void dismiss(Runnable action) {
 
-        int[] order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
         mChart.dismiss(new Animation()
                 .setOverlap(.5f, order)
                 .setEndAction(action));

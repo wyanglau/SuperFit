@@ -10,78 +10,128 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ca.utoronto.ee1778.superfit.controller.DailyCheckinActivity">
 
+    <TextView
+        android:id="@+id/textview_testmode_exercise_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Exercise:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textview_testmode_exercise_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Exercise_Name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/imageview_daily_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="SUC TIMES"
         android:id="@+id/testview_daily_success_times"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="SUC TIMES"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/textview_heartRate"
-        android:text="HeartRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="70dp"
-        android:layout_gravity="center_horizontal" />
+        android:text="HeartRate"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Movement"
         android:id="@+id/textview_tile"
-
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal" />
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+
+        android:text="Movement"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
         android:id="@+id/button_checkin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:onClick="recordAndReturn"
-        android:layout_gravity="center_horizontal" />
+        android:text="Check In"
+        android:visibility="gone" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="connect Ble"
         android:id="@+id/btnBleConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:onClick="onBtnSetupBle"
-        android:layout_gravity="center_horizontal" />
+        android:text="connect Ble" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="exercise"
         android:id="@+id/textview_daily_exercise"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="exercise"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="sets"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/textview_daily_sets"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="sets"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="rep"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/textview_daily_rep"
-        android:layout_gravity="center_horizontal" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="rep"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_test_start_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="START NEW TEST"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_test_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:clickable="false"
+        android:text="Confirm"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_test_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="SKIP"
+        android:onClick="onBtnSkip"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -74,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, DailyCheckinActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Constant.EXTRAS_TAG_USER, user);
+
                 intent.putExtras(bundle);
+                intent.putExtra(Constant.EXTRAS_TAG_TEST_MODE, Constant.MODE_CHECK_IN);
+
                 startActivity(intent);
 
             }
@@ -94,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
 
-
     }
-
 
 
     //// TODO: 2016-03-09  only test data here now
@@ -132,19 +133,35 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_exercise) {
 
-            Toast.makeText(this, "exercise", Toast.LENGTH_SHORT).show();
+
+            editExercise();
+
             return true;
         } else if (id == R.id.action_profile) {
             Toast.makeText(this, "action_profile", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_new_exercise) {
-            Toast.makeText(this, "action_new_exercise", Toast.LENGTH_SHORT).show();
+            newExercise();
             return true;
         } else if (id == R.id.action_ble) {
             onBleAction();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void newExercise() {
+        Intent intent = new Intent(this, DailyCheckinActivity.class);
+        intent.putExtra(Constant.EXTRAS_TAG_TEST_MODE, Constant.MODE_TEST);
+        startActivity(intent);
+        finish();
+    }
+
+    private void editExercise() {
+        Intent intent = new Intent(this, EditExerciseActivity.class);
+        startActivity(intent);
+
+
     }
 
     private void onBleAction() {
@@ -204,4 +221,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
 }

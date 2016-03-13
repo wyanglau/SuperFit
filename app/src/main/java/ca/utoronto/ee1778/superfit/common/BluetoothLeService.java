@@ -111,28 +111,22 @@ public class BluetoothLeService extends Service {
     private PreferenceWR mDevicePrefs = null;
 
     public List<GenericBluetoothProfile> getmProfiles() {
-        if (mProfiles == null) {
-            mProfiles = new ArrayList<GenericBluetoothProfile>();
-        }
+
         return mProfiles;
     }
 
-    public void setmProfiles(List<GenericBluetoothProfile> mProfiles) {
-        this.mProfiles = mProfiles;
-    }
 
     public void addProfile(GenericBluetoothProfile profile) {
         if (mProfiles != null) {
             mProfiles.add(profile);
         } else {
-            mProfiles = new ArrayList<GenericBluetoothProfile>();
             mProfiles.add(profile);
         }
     }
 
 
 
-    private List<GenericBluetoothProfile> mProfiles;
+    private final static List<GenericBluetoothProfile> mProfiles = new ArrayList<GenericBluetoothProfile>();
     public Timer disconnectionTimer;
     private final Lock lock = new ReentrantLock();
 
@@ -301,7 +295,7 @@ public class BluetoothLeService extends Service {
         };
 
         queueThread.start();
-        mProfiles = new ArrayList<GenericBluetoothProfile>();
+
         return true;
     }
 

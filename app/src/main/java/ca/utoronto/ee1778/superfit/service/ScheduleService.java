@@ -27,7 +27,7 @@ public class ScheduleService {
 
     public void update(Schedule schedule) {
 
-        dbUtils.updateSchedule(schedule.getId(), schedule.getWeight(), schedule.getRep(), schedule.getSets());
+        dbUtils.updateSchedule(schedule.getId(), schedule.getWeight(), schedule.getRep(), schedule.getSets(), schedule.getActive());
     }
 
 }

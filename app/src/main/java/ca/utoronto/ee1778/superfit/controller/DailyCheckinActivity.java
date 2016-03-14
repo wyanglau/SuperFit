@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +62,7 @@ public class DailyCheckinActivity extends Activity {
     private static final int PREF_ACT_REQ = 0;
     private static final int FWUPDATE_ACT_REQ = 1;
 
+    private Schedule schedule;
     // BLE
     private BluetoothLeService mBtLeService = null;
 
@@ -87,6 +89,9 @@ public class DailyCheckinActivity extends Activity {
     private TextView resultTextview;
     private ImageView resultImageView;
 
+    private TextView weightDetailTag;
+    private TextView weightDetail;
+
     private TextView exerciseNameTag;
     private TextView setsTag;
     private TextView repsTag;
@@ -98,6 +103,9 @@ public class DailyCheckinActivity extends Activity {
     private Button skipBtn;
     private Button startBtn;
     private Button cancelBtn;
+
+    private SeekBar progressBar;
+    private TextView progressTextView;
 
 
     private Button checkInButton;
@@ -126,7 +134,7 @@ public class DailyCheckinActivity extends Activity {
         repTextView = (TextView) findViewById(R.id.textview_daily_rep);
         resultImageView = (ImageView) findViewById(R.id.imageview_daily_result);
         successTimes = (TextView) findViewById(R.id.testview_daily_success_times);
-        exerciseService = ExerciseService.newInstance(this);
+
         checkInButton = (Button) findViewById(R.id.button_checkin);
         startBtn = (Button) findViewById(R.id.button_test_start);
         cancelBtn = (Button) findViewById(R.id.button_checkin_cancel);
@@ -135,10 +143,14 @@ public class DailyCheckinActivity extends Activity {
         confirmBtn = (Button) findViewById(R.id.button_test_confirm);
         skipBtn = (Button) findViewById(R.id.button_test_skip);
         resultTextview = (TextView) findViewById(R.id.textview_test_result);
-
+        weightDetail = (TextView) findViewById(R.id.textview_daily_weight);
+        weightDetailTag = (TextView) findViewById(R.id.textview_daily_weight_tag);
         exerciseNameTag = (TextView) findViewById(R.id.textview_daily_exercise_tag);
         setsTag = (TextView) findViewById(R.id.textview_daily_sets_tag);
         repsTag = (TextView) findViewById(R.id.textview_daily_rep_tag);
+
+        progressBar = (SeekBar) findViewById(R.id.seekBar_progress);
+        progressTextView = (TextView) findViewById(R.id.textView_seekprogress);
 
         Intent intent = getIntent();
         activity_mode = intent.getIntExtra(Constant.EXTRAS_TAG_TEST_MODE, 1);
@@ -150,13 +162,13 @@ public class DailyCheckinActivity extends Activity {
         gatts = mBtLeService.getGatts();
 
         scheduleService = new ScheduleService(this);
-
+        exerciseService = ExerciseService.newInstance(this);
+        exerciseService.mode = activity_mode;
 
         if (activity_mode == Constant.MODE_CHECK_IN) {
             initScheduleView();
         } else {
             initTestView();
-
         }
 
 
@@ -192,12 +204,22 @@ public class DailyCheckinActivity extends Activity {
     }
 
     public void onBtnConfirm(View view) {
+        confirmBtn.setEnabled(false);
         String text = confirmBtn.getText().toString();
 
         if (text.equals(Constant.TAG_CONFIRM)) {
-            System.out.println("RYAN:NEW:SCHEDULE");
-        } else {
+            Schedule schedule = exerciseService.getTobeScheduled();
+            schedule.setUserId(user.getId());
+            schedule.setActive(1);
+            schedule.setRep(Constant.RECOMMEND_REPS);
+            schedule.setSets(Constant.RECOMMEND_SETS);
+            schedule.setExercise(Constant.EXERCISE_NAME);
+            exerciseService.createSchedule(schedule);
+            finish();
 
+        } else {
+            //Continue
+            resultTextview.setVisibility(View.GONE);
             String tmp = inputWeight.getText().toString();
             double recWeight = 0;
             if (tmp.isEmpty()) {
@@ -224,6 +246,8 @@ public class DailyCheckinActivity extends Activity {
 
     private void initScheduleView() {
         exerciseTextview.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        progressTextView.setVisibility(View.VISIBLE);
         setsTextView.setVisibility(View.VISIBLE);
         repTextView.setVisibility(View.VISIBLE);
         checkInButton.setVisibility(View.VISIBLE);
@@ -231,17 +255,65 @@ public class DailyCheckinActivity extends Activity {
         setsTag.setVisibility(View.VISIBLE);
         repsTag.setVisibility(View.VISIBLE);
         cancelBtn.setVisibility(View.VISIBLE);
+        weightDetail.setVisibility(View.VISIBLE);
+        weightDetailTag.setVisibility(View.VISIBLE);
 
-        Schedule schedule = scheduleService.findSchedule();
+
+        progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressTextView.setText(String.valueOf(progress + "%"));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        schedule = scheduleService.findSchedule();
         exerciseTextview.setText(schedule.getExercise());
         setsTextView.setText(String.valueOf(schedule.getSets()));
         repTextView.setText(String.valueOf(schedule.getRep()));
+        weightDetail.setText(String.valueOf(schedule.getWeight()));
     }
 
-    public void recordAndReturn(View view) {
+    public void onBtnCheckin(View view) {
 
+        if(exerciseService.getFail_cnt()==0 ||exerciseService.getSuc_cnt()==0 ){
+            Toast.makeText(this,"Try to do some exercise and then record",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(progressBar.getProgress()==0){
+            Toast.makeText(this,"I cannot believe you finished 0% and still want to check in.",Toast.LENGTH_SHORT).show();
+            return;
+        }
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+
         String date = sDateFormat.format(new java.util.Date());
+        Exercise exercise = new Exercise(schedule.getExercise(), date, schedule.getWeight(), schedule.getRep(), schedule.getSets());
+
+
+        exercise.setCompletionRate(progressBar.getProgress());
+
+
+        exercise.setScheduleId(schedule.getId());
+        exercise.setFailed_times(exerciseService.getFail_cnt());
+        exercise.setSuccess_times(exerciseService.getSuc_cnt());
+
+        exerciseService.record(exercise);
+        exerciseService.refresh();
+
+        this.finish();
+    }
+
+    public Exercise testdata(String date) {
         // --test data
         Exercise exercise = new Exercise("wanghaha", date, 100, 1000, 5);
         exercise.setLogoId(R.drawable.cat);
@@ -261,19 +333,11 @@ public class DailyCheckinActivity extends Activity {
 
         exercise.setFailed_times(100 - Result_2);
         exercise.setSuccess_times(Result_2);
-
-        exerciseService.record(exercise);
-
-
-        this.finish();
+        return exercise;
     }
 
     public void onBtnSkip(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constant.EXTRAS_TAG_USER, user);
-        intent.putExtras(bundle);
-        startActivity(intent);
+
         this.finish();
     }
 
@@ -402,7 +466,7 @@ public class DailyCheckinActivity extends Activity {
                                 Log.d("DailyCheckinActivity", "Configuring service with uuid : " + s.getUuid().toString());
 
                                 if (SensorTagMovementProfile.isCorrectService(s)) {
-                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService, activity_mode);
+                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService);
                                     currentProfiles.add(mov);
                                     if (nrNotificationsOn < maxNotifications) {
                                         mov.configureService();
@@ -464,7 +528,7 @@ public class DailyCheckinActivity extends Activity {
                 String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
                 //Log.d("DailyCheckinActivity","Got Characteristic : " + uuidStr);
 
-                if (!exerciseService.isFinished()) {
+                if ((!exerciseService.isFinished()) || (exerciseService.mode == Constant.MODE_CHECK_IN)) {
                     for (int ii = 0; ii < charList.size(); ii++) {
                         BluetoothGattCharacteristic tempC = charList.get(ii);
                         if ((tempC.getUuid().toString().equals(uuidStr))) {

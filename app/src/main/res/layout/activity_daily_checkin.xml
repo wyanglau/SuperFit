@@ -20,8 +20,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-         >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textview_daily_exercise_tag"
@@ -30,6 +29,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Exercise: "
                 android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#3CBA7B"
                 android:visibility="gone" />
 
             <TextView
@@ -48,24 +48,58 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textview_daily_sets_tag"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Sets: "
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:visibility="gone" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textview_daily_sets"
+                <TextView
+                    android:id="@+id/textview_daily_sets_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Sets: "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#3CBA7B"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textview_daily_sets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="N/A"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="N/A"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:layout_marginLeft="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textview_daily_rep_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Repetition: "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="#3CBA7B"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textview_daily_rep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="N/A"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -74,16 +108,17 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textview_daily_rep_tag"
+                android:id="@+id/textview_daily_weight_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Repetition: "
+                android:text="Weight: "
                 android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#3CBA7B"
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/textview_daily_rep"
+                android:id="@+id/textview_daily_weight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -102,6 +137,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Exercise:"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3CBA7B"
         android:visibility="gone" />
 
     <TextView
@@ -146,9 +182,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
 
-
         android:text="HeartRate"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3CBA7B" />
 
     <TextView
         android:id="@+id/textview_heartRate"
@@ -166,7 +202,8 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:text="Movement"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3CBA7B" />
 
     <TextView
         android:id="@+id/textview_tile"
@@ -188,37 +225,8 @@
         android:text="connect Ble"
         android:visibility="gone" />
 
-    <!-- only for daily checkin-->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-    <Button
-        android:id="@+id/button_checkin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:onClick="recordAndReturn"
-        android:text="Check In"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/button"
-        android:visibility="gone" />
-    <Button
-        android:id="@+id/button_checkin_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:onClick="onBtnCancel"
-        android:text="Cancel"
-        android:background="@drawable/button"
-        android:visibility="gone" />
-    </LinearLayout>
+
+
     <!-- only for test mode-->
     <TextView
         android:id="@+id/textview_test_result"
@@ -228,14 +236,15 @@
         android:text="N/A"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
+
     <TextView
         android:id="@+id/textview_test_input_weight_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="Expecting Weight:"
+        android:text="Expected Weight:"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3CBA7B"
         android:visibility="gone" />
 
     <EditText
@@ -253,7 +262,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal">
 
         <Button
@@ -279,11 +288,12 @@
             android:visibility="gone" />
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
@@ -309,4 +319,60 @@
             android:visibility="gone" />
 
     </LinearLayout>
+    <!-- only for daily checkin-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <SeekBar
+            android:id="@+id/seekBar_progress"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textView_seekprogress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_checkin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button"
+            android:onClick="onBtnCheckin"
+            android:text="Check In"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_checkin_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button"
+            android:onClick="onBtnCancel"
+            android:text="Cancel"
+            android:visibility="gone" />
+    </LinearLayout>
+
 </LinearLayout>

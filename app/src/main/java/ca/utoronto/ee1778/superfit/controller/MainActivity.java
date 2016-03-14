@@ -86,11 +86,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         } else if (id == R.id.action_profile) {
-            Toast.makeText(this, "action_profile", Toast.LENGTH_SHORT).show();
+            editUserProfile();
             return true;
         } else if (id == R.id.action_new_exercise) {
             newExercise();
@@ -156,11 +158,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void editUserProfile() {
+        Intent intent = new Intent(this, EditProfileActivity.class);
+        startActivity(intent);
+
+
+    }
+
     private void newExercise() {
         Intent intent = new Intent(this, DailyCheckinActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.EXTRAS_TAG_USER, user);
+        intent.putExtras(bundle);
         intent.putExtra(Constant.EXTRAS_TAG_TEST_MODE, Constant.MODE_TEST);
         startActivity(intent);
-        finish();
+
     }
 
     private void editExercise() {

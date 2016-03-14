@@ -17,7 +17,9 @@ import java.util.List;
 import ca.utoronto.ee1778.superfit.R;
 import ca.utoronto.ee1778.superfit.controller.adapter.ExerciseTrackerAdapter;
 import ca.utoronto.ee1778.superfit.object.Exercise;
+import ca.utoronto.ee1778.superfit.object.Schedule;
 import ca.utoronto.ee1778.superfit.service.ExerciseService;
+import ca.utoronto.ee1778.superfit.service.ScheduleService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +38,7 @@ public class MainFragment extends Fragment {
     private Context mContext;
     private View mView;
     private ExerciseService exerciseService;
+    private ScheduleService scheduleService;
     private ExerciseTrackerAdapter mAdapter;
 
     public MainFragment() {
@@ -67,30 +70,31 @@ public class MainFragment extends Fragment {
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         exerciseService = new ExerciseService(mContext);
-
-        List<Exercise> exerciseList = exerciseService.getALlDailyRecords();
+        scheduleService = new ScheduleService(mContext);
+        Schedule schedule = scheduleService.findSchedule();
+        List<Exercise> exerciseList = exerciseService.getCurrentExercises(schedule.getId());
         mAdapter = new ExerciseTrackerAdapter(mContext, exerciseList);
         mRecyclerView.setAdapter(mAdapter);
 
         return mView;
     }
 
-    public void insertData(Exercise exercise){
-        mAdapter.insert(exercise,0);
+    public void insertData(Exercise exercise) {
+        mAdapter.insert(exercise, 0);
     }
 
     public List<Exercise> gettestdata() {
         //---test data---
         List<Exercise> exerciseList = new ArrayList<>(5);
 
-        Exercise exercise = new Exercise("wanghaha", "2016-05-12", 100, 1000,5);
+        Exercise exercise = new Exercise("wanghaha", "2016-05-12", 100, 1000, 5);
         exercise.setLogoId(R.drawable.cat);
         exercise.setCompletionRate(99);
 
-        Exercise exercise1 = new Exercise("wanghaha", "2016-05-12", 100, 1000,5);
+        Exercise exercise1 = new Exercise("wanghaha", "2016-05-12", 100, 1000, 5);
         exercise1.setLogoId(R.drawable.cat);
         exercise1.setCompletionRate(50);
-        Exercise exercise2 = new Exercise("wanghaha", "2016-05-12", 50, 1000,5);
+        Exercise exercise2 = new Exercise("wanghaha", "2016-05-12", 50, 1000, 5);
         exercise2.setLogoId(R.drawable.cat);
         exercise2.setCompletionRate(66);
         exerciseList.add(exercise);

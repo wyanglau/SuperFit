@@ -16,13 +16,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Exercise Name:"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#3CBA7B"
+        />
 
     <TextView
         android:id="@+id/textview_edit_exerciseName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
+        android:text="N/A"
+        android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -30,19 +33,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Weight:"
+        android:paddingTop="@dimen/abc_text_size_large_material"
+        android:textColor="#3CBA7B"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/editTextView_edit_weight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:singleLine="true"/>
+        android:inputType="number"
+        android:singleLine="true"
+        android:maxLength="5"/>
 
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/abc_text_size_large_material"
+        android:textColor="#3CBA7B"
         android:text="Sets"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -51,13 +59,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:inputType="numberDecimal"
-        android:singleLine="true" />
+        android:inputType="number"
+        android:singleLine="true"
+        android:textStyle="bold"
+        android:maxLength="5"/>
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/abc_text_size_large_material"
+        android:textColor="#3CBA7B"
         android:text="Repetition"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -67,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:inputType="numberDecimal"
+        android:textStyle="bold"
         android:singleLine="true"/>
 
     <Button
@@ -75,7 +88,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="Confirm"
-        android:onClick="editConfirm"/>
+        android:onClick="editConfirm"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_long"/>
 
     <Button
         android:id="@+id/button_edit_cancel"
@@ -83,6 +98,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:onClick="cancel"
-        android:text="CANCEL" />
+        android:text="CANCEL"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_long"/>
 
 </LinearLayout>

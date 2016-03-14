@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.utoronto.ee1778.superfit.DAO.DbUtils;
+import ca.utoronto.ee1778.superfit.common.Constant;
 import ca.utoronto.ee1778.superfit.object.Exercise;
 import ca.utoronto.ee1778.superfit.object.Result;
+import ca.utoronto.ee1778.superfit.object.Schedule;
 
 /**
  * Created by liuwyang on 2016-03-07.
@@ -19,11 +21,8 @@ public class ExerciseService {
     private DbUtils dbUtils;
     private boolean isFinished;
     private static ExerciseService mTHis;
-
     private int suc_cnt = 0;
     private int fail_cnt = 0;
-
-
     public Result preData;
     public int totalPassed;
     public int numOfStartRegionInOut;
@@ -37,6 +36,10 @@ public class ExerciseService {
 
     private Info _info;
     private double nextWeight;
+
+    private Schedule tobeScheduled;
+    public int mode = Constant.MODE_CHECK_IN;
+
 
     /**
      * heart rate
@@ -92,15 +95,7 @@ public class ExerciseService {
     }
 
     public void record(Exercise exercise) {
-        if (exercise.getSuccess_times() == 0) {
-            exercise.setSuccess_times(suc_cnt);
-        }
-        if (exercise.getFailed_times() == 0) {
-            exercise.setFailed_times(fail_cnt);
-        }
 
-        suc_cnt = 0;
-        fail_cnt = 0;
         dbUtils.recordDaily(exercise.getDate(),
                 exercise.getName(), exercise.getCompletionRate(),
                 exercise.getWeight(), exercise.getNumOfSet(), exercise.getRepetition(), exercise.getScheduleId(), exercise.getSuccess_times(), exercise.getFailed_times());
@@ -108,7 +103,8 @@ public class ExerciseService {
 
     public boolean tester(Result result) {
 
-        Log.d("ExerciseService", "entry:tester:" + result.toString() + " heartRate:" + getHr());
+        Log.d("ExerciseService", "entry:tester:recommended weight:"+nextWeight+"  "+ " heartRate:" + getHr()+"  " + result.toString() );
+
         Result curData = result;
 
 
@@ -164,10 +160,10 @@ public class ExerciseService {
         System.out.println("Ryan:inout:clear: start" + " " + numOfStartRegionInOut + "  end:" + numOfEndRegionInOut);
 
         Log.d("ExerciseService", "tester:exit:preData" + preData.toString());
-        if (totalPassed >= 15) {
+        if ((totalPassed >= Constant.REQUIRED_TEST_TIME) && (mode == Constant.MODE_TEST)) {
 
 
-            Log.d("ExerciseService","final HR:"+getHr());
+            Log.d("ExerciseService", "final HR:" + getHr());
             if (_info == null) {
                 _info = new Info(getNextWeight(), getHr(), curData.getAge());
             } else {
@@ -346,16 +342,19 @@ public class ExerciseService {
 
     }
 
-    public static void main(String[] args) {
-        ExerciseService exerciseService = new ExerciseService(null);
-        Result result = new Result(0, 1, 0);
-        result.setAge(24);
 
-        exerciseService.preData = result;
-        exerciseService.setHr(130);
-        exerciseService.totalPassed = 15;
-        System.out.println(exerciseService.tester(result));
+    public void createSchedule(Schedule schedule) {
+        Schedule currentSchedule = dbUtils.getCurrentSchedule();
+        dbUtils.updateSchedule(currentSchedule.getId(), currentSchedule.getWeight(), currentSchedule.getRep(), currentSchedule.getSets(), 0);
+        dbUtils.createSchedule(schedule.getWeight(), schedule.getRep(), schedule.getSets(), schedule.getUserId(), schedule.getExercise());
 
+    }
 
+    public Schedule getTobeScheduled() {
+        return tobeScheduled;
+    }
+
+    public void setTobeScheduled(Schedule tobeScheduled) {
+        this.tobeScheduled = tobeScheduled;
     }
 }

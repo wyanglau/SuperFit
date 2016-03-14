@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import ca.utoronto.ee1778.superfit.common.Constant;
+
 /**
  * Created by liuwyang on 2016-02-10.
  */
@@ -95,7 +97,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(sql_exercise);
         db.execSQL(sql_schedule);
 
-        String sql_data = "INSERT INTO `schedule`(`exercise`,`user_id`,`repetition`,`num_of_set`,`weight`,`active`) VALUES ('test','1','10','5','50','1')";
+        String sql_data = "INSERT INTO `schedule`(`exercise`,`user_id`,`repetition`,`num_of_set`,`weight`,`active`) VALUES ('"+ Constant.EXERCISE_NAME+"','1','"+Constant.RECOMMEND_REPS+"','"+Constant.RECOMMEND_SETS+"','32.5','1')";
         db.execSQL(sql_data);
     }
 

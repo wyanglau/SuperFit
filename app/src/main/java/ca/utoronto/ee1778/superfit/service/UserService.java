@@ -24,6 +24,7 @@ public class UserService {
 
     /**
      * only return the first USER since we right now only support one user exactly.
+     *
      * @return
      */
     public User getUser() {
@@ -40,6 +41,10 @@ public class UserService {
 
         dbUtils.createUser(user.getName(), String.valueOf(user.getAge()), user.getWeight());
 
+    }
+
+    public void update(User user) {
+        dbUtils.updateUser(user.getId(), user.getName(), user.getWeight(), user.getAge());
     }
 
 }

@@ -7,4 +7,6 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="light_blue">#00BED0</color>
+
+    <color name="text_tag">#3CBA7B</color>
 </resources>

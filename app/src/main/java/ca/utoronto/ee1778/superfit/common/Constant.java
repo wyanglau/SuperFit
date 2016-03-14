@@ -17,9 +17,17 @@ public class Constant {
     public final static int MODE_TEST = 0;
     public final static int MODE_CHECK_IN = 1;
 
-    public final static int REQUIRED_TEST_TIME=15;
+    public final static int REQUIRED_TEST_TIME = 15;
 
 
-    public final static String TAG_CONFIRM="Confirm";
-    public final static String TAG_CONTINUE="Continue";
+    public final static String TAG_CONFIRM = "Confirm";
+    public final static String TAG_CONTINUE = "Continue";
+
+
+    /**
+     * currently, we used only 1 types of exercise to trace the progress
+     */
+    public final static int RECOMMEND_SETS = 5;
+    public final static int RECOMMEND_REPS = 12;
+    public final static  String EXERCISE_NAME="Dumbbell Bicep Curl";
 }

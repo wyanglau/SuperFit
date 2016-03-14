@@ -13,73 +13,71 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Name"
-        android:id="@+id/textView"
         android:layout_marginTop="25dp"
-        android:textColor="@color/text_tag"
-      />
+        android:text="Name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/text_tag" />
 
     <EditText
+        android:id="@+id/edittext_edit_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:textStyle="bold"
-        android:id="@+id/editText_person_name"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Ryan" />
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Age"
-        android:id="@+id/textView2"
         android:layout_marginTop="10dp"
-        android:textColor="@color/text_tag"/>
+        android:text="Age"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/text_tag" />
 
     <EditText
+        android:id="@+id/editText_edit_age"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:ems="10"
-        android:textStyle="bold"
-        android:id="@+id/editText_person_age"
-        android:layout_below="@+id/editText"
-        android:layout_alignEnd="@+id/editText"
-        android:text="25" />
+        android:inputType="number"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Weight"
         android:layout_marginTop="10dp"
-        android:id="@+id/textView3"
-        android:textColor="@color/text_tag"/>
+        android:text="Weight"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/text_tag" />
 
     <EditText
+        android:id="@+id/editText_edit_weight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:ems="10"
-        android:textStyle="bold"
-        android:id="@+id/editText_person_weight"
-        android:text="110" />
+        android:inputType="number"
+        android:textStyle="bold" />
 
     <Button
+        android:id="@+id/editUserConfirmBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Here We Go"
-        android:id="@+id/createUserBtn"
-        android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="75dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="createNewProfile"
-        android:background="@drawable/button_long"/>
+        android:layout_marginTop="30dp"
+        android:background="@drawable/button_long"
+        android:onClick="onBtnConfirm"
+        android:text="Confirm"
+        />
 
+    <Button
+        android:id="@+id/editUserCancelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_long"
+        android:onClick="onBtnCancel"
+        android:text="Cancel" />
 </LinearLayout>

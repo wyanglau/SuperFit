@@ -191,9 +191,10 @@ public class DbUtils {
 
     public void recordDaily(String date, String exerciseName, double completionRate, double weight, int sets, int reps, Long scheduleId, int success_times, int failed_times) {
         Cursor cursor = null;
-        r.lock();
+        w.lock();
         try {
-            db = dbHelper.getReadableDatabase();
+
+            db = dbHelper.getWritableDatabase();
             String sql = "INSERT INTO `" + DbHelper.TABLE_NAME_DAILY
                     + "`(`" + DbHelper.TABLE_DAILY_COL_EXERCISE + "`," +
                     "`" + DbHelper.TABLE_DAILY_COL_USERID + "`," +
@@ -210,12 +211,11 @@ public class DbUtils {
                     + "','" + completionRate + "','" + weight + "','" + reps + "','" + scheduleId + "','+" + failed_times + "+','" + success_times + "','" + sets + "')";
 
             db.execSQL(sql);
-            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         } finally {
 
-            r.unlock();
+            w.unlock();
             if (cursor != null) {
                 cursor.close();
             }
@@ -271,7 +271,7 @@ public class DbUtils {
         }
     }
 
-    public void updateSchedule(Long id, double weight, int reps, int sets) {
+    public void updateSchedule(Long id, double weight, int reps, int sets, int active) {
 
         db = dbHelper.getWritableDatabase();
         w.lock();
@@ -281,10 +281,57 @@ public class DbUtils {
             contentValues.put(DbHelper.TABLE_SCHEDULE_COL_WEIGHT, weight);
             contentValues.put(DbHelper.TABLE_SCHEDULE_COL_REP, reps);
             contentValues.put(DbHelper.TABLE_SCHEDULE_COL_NUM_OF_SET, sets);
-
+            contentValues.put(DbHelper.TABLE_SCHEDULE_COL_ACTIVE, active);
             String whereClaus = DbHelper.TABLE_SCHEDULE_COL_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(id)};
             db.update(DbHelper.TABLE_NAME_SCHEDULE, contentValues, whereClaus, whereArgs);
+
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+        } finally {
+
+            w.unlock();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+
+    }
+
+    public void createSchedule(double weight, int reps, int sets, Long userId, String exercise) {
+        w.lock();
+        try {
+            db = dbHelper.getWritableDatabase();
+
+
+            String sql = "INSERT INTO `schedule`(`exercise`,`user_id`,`repetition`,`num_of_set`,`weight`,`active`) " +
+                    "VALUES ('" + exercise + "','" + userId + "','" + reps + "','" + sets + "','" + weight + "','1')";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+        } finally {
+            w.unlock();
+            if (db != null) {
+                db.close();
+            }
+        }
+
+    }
+
+    public void updateUser(Long id, String name, String weight, int age) {
+
+        db = dbHelper.getWritableDatabase();
+        w.lock();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DbHelper.TABLE_USER_COL_ID, id);
+            contentValues.put(DbHelper.TABLE_USER_COL_NAME, name);
+            contentValues.put(DbHelper.TABLE_USER_COL_WEIGHT, weight);
+            contentValues.put(DbHelper.TABLE_USER_COL_AGE, age);
+            String whereClaus = DbHelper.TABLE_USER_COL_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            db.update(DbHelper.TABLE_NAME_USER, contentValues, whereClaus, whereArgs);
 
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage(), e);

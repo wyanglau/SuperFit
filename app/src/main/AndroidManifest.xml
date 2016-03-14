@@ -25,10 +25,12 @@
             android:name=".controller.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".controller.LoginActivity"
+        <activity
+            android:name=".controller.LoginActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -43,7 +45,10 @@
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".controller.EditExerciseActivity"
-            android:label="@string/title_activity_edit_exercise"></activity>
+            android:label="@string/title_activity_edit_exercise" />
+        <activity
+            android:name=".controller.EditProfileActivity"
+            android:label="@string/title_activity_edit_profile"></activity>
     </application>
 
 </manifest>

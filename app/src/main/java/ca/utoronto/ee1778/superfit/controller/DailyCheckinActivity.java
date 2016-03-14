@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,11 +87,17 @@ public class DailyCheckinActivity extends Activity {
     private TextView resultTextview;
     private ImageView resultImageView;
 
+    private TextView exerciseNameTag;
+    private TextView setsTag;
+    private TextView repsTag;
+
+
     private EditText inputWeight;
     private Button startNewTestBtn;
     private Button confirmBtn;
     private Button skipBtn;
     private Button startBtn;
+    private Button cancelBtn;
 
 
     private Button checkInButton;
@@ -121,12 +129,16 @@ public class DailyCheckinActivity extends Activity {
         exerciseService = ExerciseService.newInstance(this);
         checkInButton = (Button) findViewById(R.id.button_checkin);
         startBtn = (Button) findViewById(R.id.button_test_start);
+        cancelBtn = (Button) findViewById(R.id.button_checkin_cancel);
         inputWeight = (EditText) findViewById(R.id.textview_test_input_weight);
         startNewTestBtn = (Button) findViewById(R.id.button_test_start_new);
         confirmBtn = (Button) findViewById(R.id.button_test_confirm);
         skipBtn = (Button) findViewById(R.id.button_test_skip);
         resultTextview = (TextView) findViewById(R.id.textview_test_result);
 
+        exerciseNameTag = (TextView) findViewById(R.id.textview_daily_exercise_tag);
+        setsTag = (TextView) findViewById(R.id.textview_daily_sets_tag);
+        repsTag = (TextView) findViewById(R.id.textview_daily_rep_tag);
 
         Intent intent = getIntent();
         activity_mode = intent.getIntExtra(Constant.EXTRAS_TAG_TEST_MODE, 1);
@@ -162,6 +174,8 @@ public class DailyCheckinActivity extends Activity {
         }
 
         exerciseService.setNextWeight(Double.valueOf(weight));
+
+        Log.d(TAG, "start a new test, the weight :" + weight);
     }
 
     private void enableAllBtn(Boolean enable) {
@@ -173,16 +187,25 @@ public class DailyCheckinActivity extends Activity {
 
     public void onBtnStartNew(View view) {
         exerciseService.refresh();
+        enableAllBtn(true);
         resultTextview.setVisibility(View.GONE);
     }
 
-    public void onBtnConfirm(View view){
-      String text = confirmBtn.getText().toString();
+    public void onBtnConfirm(View view) {
+        String text = confirmBtn.getText().toString();
 
-        if(text.equals(Constant.TAG_CONFIRM)){
-           System.out.println("RYAN:NEW:SCHEDULE");
-        }
-        else{
+        if (text.equals(Constant.TAG_CONFIRM)) {
+            System.out.println("RYAN:NEW:SCHEDULE");
+        } else {
+
+            String tmp = inputWeight.getText().toString();
+            double recWeight = 0;
+            if (tmp.isEmpty()) {
+                recWeight = exerciseService.getNextWeight();
+            } else {
+                recWeight = Double.valueOf(tmp);
+            }
+            exerciseService.setNextWeight(recWeight);
             exerciseService.setFinished(false);
         }
 
@@ -204,7 +227,10 @@ public class DailyCheckinActivity extends Activity {
         setsTextView.setVisibility(View.VISIBLE);
         repTextView.setVisibility(View.VISIBLE);
         checkInButton.setVisibility(View.VISIBLE);
-
+        exerciseNameTag.setVisibility(View.VISIBLE);
+        setsTag.setVisibility(View.VISIBLE);
+        repsTag.setVisibility(View.VISIBLE);
+        cancelBtn.setVisibility(View.VISIBLE);
 
         Schedule schedule = scheduleService.findSchedule();
         exerciseTextview.setText(schedule.getExercise());
@@ -376,7 +402,7 @@ public class DailyCheckinActivity extends Activity {
                                 Log.d("DailyCheckinActivity", "Configuring service with uuid : " + s.getUuid().toString());
 
                                 if (SensorTagMovementProfile.isCorrectService(s)) {
-                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService,activity_mode);
+                                    SensorTagMovementProfile mov = new SensorTagMovementProfile(context, currentDevice, s, mBtLeService, bluetoothGatt, exerciseService, activity_mode);
                                     currentProfiles.add(mov);
                                     if (nrNotificationsOn < maxNotifications) {
                                         mov.configureService();
@@ -447,10 +473,10 @@ public class DailyCheckinActivity extends Activity {
                                 if (p.isDataC(tempC)) {
                                     if (p instanceof SensorTagMovementProfile) {
                                         if (activity_mode == Constant.MODE_CHECK_IN) {
-                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, null, null,null,null);
+                                            ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes, null, null, null);
                                         } else {
                                             if (!exerciseService.isFinished()) {
-                                                ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes, inputWeight,resultTextview,confirmBtn);
+                                                ((SensorTagMovementProfile) p).didUpdateValueForCharacteristic(tempC, angleTextview, resultImageView, successTimes, inputWeight, resultTextview, confirmBtn);
                                             }
                                         }
                                     } else {
@@ -653,5 +679,9 @@ public class DailyCheckinActivity extends Activity {
 
     public void toastit(Context context) {
         Toast.makeText(context, "haha", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onBtnCancel(View view) {
+        finish();
     }
 }

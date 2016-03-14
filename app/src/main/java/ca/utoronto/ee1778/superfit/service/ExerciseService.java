@@ -1,6 +1,7 @@
 package ca.utoronto.ee1778.superfit.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ExerciseService {
     private int fail_cnt = 0;
 
 
-    Result preData;
+    public Result preData;
     public int totalPassed;
     public int numOfStartRegionInOut;
     public int numOfEndRegionInOut;
@@ -60,12 +61,13 @@ public class ExerciseService {
 
     public ExerciseService(Context context) {
         this.mContext = context;
+
         dbUtils = new DbUtils(mContext);
 
         startDegree = -90;
         endDegree = 90;
-        startThresholdDegree = 15;
-        endThresholdDegree = 45;
+        startThresholdDegree = 20;
+        endThresholdDegree = 50;
         totalPassed = 0;
         numOfReps = 15;
     }
@@ -106,13 +108,14 @@ public class ExerciseService {
 
     public boolean tester(Result result) {
 
+        Log.d("ExerciseService", "entry:tester:" + result.toString() + " heartRate:" + getHr());
         Result curData = result;
 
 
-        if (preData == null && curData.getDegree()!=null) {
+        if (preData == null && curData.getDegree() != null) {
             preData = curData;
             return false;
-        }else if (preData == null && curData.getDegree()==null){
+        } else if (preData == null && curData.getDegree() == null) {
             return false;
         }
 
@@ -135,7 +138,7 @@ public class ExerciseService {
 
             if (((curData.getDegree() - startDegree) < startThresholdDegree) && ((preData.getDegree() - startDegree) > startThresholdDegree)) {
 
-                if (numOfStartRegionInOut==1) {
+                if (numOfStartRegionInOut == 1) {
                     numOfStartRegionInOut++;
                 }
             }
@@ -160,10 +163,11 @@ public class ExerciseService {
         }
         System.out.println("Ryan:inout:clear: start" + " " + numOfStartRegionInOut + "  end:" + numOfEndRegionInOut);
 
-
+        Log.d("ExerciseService", "tester:exit:preData" + preData.toString());
         if (totalPassed >= 15) {
 
 
+            Log.d("ExerciseService","final HR:"+getHr());
             if (_info == null) {
                 _info = new Info(getNextWeight(), getHr(), curData.getAge());
             } else {
@@ -178,6 +182,8 @@ public class ExerciseService {
             numOfEndRegionInOut = 0;
             thisRepResult = 0;
             isFinished = true;
+            Log.d("ExerciseService", "tester:exit:result:" + result.toString());
+            Log.d("ExerciseService", "tester:exit:recommend:" + recommeded);
             if (_info.getIsFinish()) {
                 result.setRecommendWeight(recommeded); //calculate the weight and push into result object
                 return true;
@@ -187,6 +193,7 @@ public class ExerciseService {
         }
 
         preData = curData;
+
 
         return false;
     }
@@ -334,8 +341,21 @@ public class ExerciseService {
             }
 
             _preWeight = _curWeight;
-            return _curWeight - 5;
+            return _curWeight - 2.5;
         }
+
+    }
+
+    public static void main(String[] args) {
+        ExerciseService exerciseService = new ExerciseService(null);
+        Result result = new Result(0, 1, 0);
+        result.setAge(24);
+
+        exerciseService.preData = result;
+        exerciseService.setHr(130);
+        exerciseService.totalPassed = 15;
+        System.out.println(exerciseService.tester(result));
+
 
     }
 }

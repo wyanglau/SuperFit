@@ -56,7 +56,8 @@ public class HeartRateMonitorProfile extends GenericBluetoothProfile {
         if (c.equals(this.dataC)) {
             float[] value = parse(c);
             ((TextView) view).setText(String.valueOf(value[0]));
-            exerciseService.setHr(value[0]);
+           exerciseService.setHr(value[0]);
+
 
         }
 

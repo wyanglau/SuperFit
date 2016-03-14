@@ -180,6 +180,7 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
             float Z = (float) v.z;
             Result result = new Result(X, Y, Z);
             result.setAge(user.getAge());
+            System.out.println("Ryan：User:age" + user.toString());
             Double current_angle = result.getDegree();
             Log.d("SensorTagMovementProf", "Ryan:approximate:new:angle: " + current_angle);
             Log.d("SensorTagMovementProf", "Ryan:approximate:angle: " + Math.toDegrees((Math.asin(Double.valueOf(v.y) > 1 ? 1 : Double.valueOf(v.y)))));
@@ -203,7 +204,7 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
 
             if (exerciseService.thisRepResult != 0) {
 
-                ((ImageView) resultImage).setImageResource(rt ? R.drawable.ic_bike_success : R.drawable.ic_pan_fail);
+                ((ImageView) resultImage).setImageResource(rt ? R.drawable.green_bubble : R.drawable.red_bubble);
                 if (rt) {
                     exerciseService.setSuc_cnt(exerciseService.getSuc_cnt() + 1);
                 } else {
@@ -213,10 +214,9 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
                 ((ImageView) resultImage).setImageResource(R.drawable.ic_question_mark);
             }
 
+            ((TextView) totalPass).setText(String.valueOf(exerciseService.totalPassed));
 
             if (testMode == Constant.MODE_TEST) {
-                ((TextView) totalPass).setText(String.valueOf(exerciseService.totalPassed));
-
 
                 if (exerciseService.isFinished()) {
 
@@ -227,13 +227,15 @@ public class SensorTagMovementProfile extends GenericBluetoothProfile {
                         ((TextView) resultText).setText("Test Passed!");
                         ((TextView) resultText).setTextColor(Color.GREEN);
                         ((Button) confirmBtn).setText(Constant.TAG_CONFIRM);
-                        ((Button) confirmBtn).setClickable(true);
+                        confirmBtn.setEnabled(true);
 
                     } else {
-                        ((Button) confirmBtn).setClickable(true);
+                        ((Button) confirmBtn).setEnabled(true);
                         ((Button) confirmBtn).setText(Constant.TAG_CONTINUE);
                         ((TextView) resultText).setText("You should try harder.");
                         ((TextView) resultText).setTextColor(Color.RED);
+                        ((EditText) weight).setEnabled(true);
+
 
                     }
 

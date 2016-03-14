@@ -10,6 +10,91 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ca.utoronto.ee1778.superfit.controller.DailyCheckinActivity">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+         >
+
+            <TextView
+                android:id="@+id/textview_daily_exercise_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Exercise: "
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/textview_daily_exercise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="N/A"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_daily_sets_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Sets: "
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/textview_daily_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="N/A"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_daily_rep_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Repetition: "
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/textview_daily_rep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="N/A"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/textview_testmode_exercise_tag"
         android:layout_width="wrap_content"
@@ -28,29 +113,59 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/imageview_daily_result"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_pan_fail"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:id="@+id/testview_daily_success_times"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="SUC TIMES"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone"/>
+        android:layout_marginTop="25dp">
+
+        <ImageView
+            android:id="@+id/imageview_daily_result"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/red_bubble" />
+
+        <TextView
+            android:id="@+id/testview_daily_success_times"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+
+            android:text="N/A"
+            android:textSize="60dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/textview_heartRate_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+
+
+        android:text="HeartRate"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/textview_heartRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:text="N/A"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
-        android:text="HeartRate"
+    <TextView
+        android:id="@+id/textview_tile_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:text="Movement"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -59,10 +174,27 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
+        android:text="N/A"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
-        android:text="Movement"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/btnBleConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:onClick="onBtnSetupBle"
+        android:text="connect Ble"
+        android:visibility="gone" />
+
+    <!-- only for daily checkin-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
     <Button
         android:id="@+id/button_checkin"
         android:layout_width="wrap_content"
@@ -72,50 +204,28 @@
         android:layout_gravity="center_horizontal"
         android:onClick="recordAndReturn"
         android:text="Check In"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/button"
         android:visibility="gone" />
-
     <Button
-        android:id="@+id/btnBleConnect"
+        android:id="@+id/button_checkin_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:onClick="onBtnSetupBle"
-        android:text="connect Ble"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/textview_daily_exercise"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="exercise"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:onClick="onBtnCancel"
+        android:text="Cancel"
+        android:background="@drawable/button"
         android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textview_daily_sets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="sets"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textview_daily_rep"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="rep"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
-
+    </LinearLayout>
+    <!-- only for test mode-->
     <TextView
         android:id="@+id/textview_test_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="RESULT"
+        android:text="N/A"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
     <TextView
@@ -123,54 +233,80 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:text="Expecting Weight:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
+
     <EditText
         android:id="@+id/textview_test_input_weight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:singleLine="true"
         android:inputType="numberDecimal"
+        android:singleLine="true"
         android:text="10"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
-    <Button
-        android:id="@+id/button_test_start"
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="START"
-        android:onClick="onBtnStart"
-        android:visibility="gone" />
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/button_test_start_new"
+        <Button
+            android:id="@+id/button_test_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button"
+            android:onClick="onBtnStart"
+            android:text="START"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_test_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button"
+            android:enabled="false"
+            android:onClick="onBtnConfirm"
+            android:text="Continue"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="START NEW TEST"
-        android:onClick="onBtnStartNew"
-        android:visibility="gone" />
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/button_test_confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:clickable="false"
-        android:text="Continue"
-        android:onClick="onBtnConfirm"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/button_test_start_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/button"
+            android:onClick="onBtnStartNew"
+            android:text="START NEW TEST"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/button_test_skip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="SKIP"
-        android:onClick="onBtnSkip"
-        android:visibility="gone" />
 
+        <Button
+            android:id="@+id/button_test_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button"
+            android:onClick="onBtnSkip"
+            android:text="SKIP"
+            android:visibility="gone" />
+
+    </LinearLayout>
 </LinearLayout>

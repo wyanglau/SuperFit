@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.TextView;
 
 import java.util.List;
@@ -56,11 +58,20 @@ public class HeartRateMonitorProfile extends GenericBluetoothProfile {
         if (c.equals(this.dataC)) {
             float[] value = parse(c);
             ((TextView) view).setText(String.valueOf(value[0]));
-           exerciseService.setHr(value[0]);
 
+           exerciseService.setHr(value[0]);
+            showAnimation(view);
 
         }
 
+    }
+
+    private void showAnimation(View view){
+        ScaleAnimation animation =new ScaleAnimation(0.0f, 1.4f, 0.0f, 1.4f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(100);
+        animation.setRepeatCount(1);
+        animation.setFillAfter(false);
+        view.startAnimation(animation);
     }
 
     public float[] parse(BluetoothGattCharacteristic c) {

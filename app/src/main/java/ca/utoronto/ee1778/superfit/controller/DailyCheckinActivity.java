@@ -91,13 +91,13 @@ public class DailyCheckinActivity extends Activity {
 
     private TextView weightDetailTag;
     private TextView weightDetail;
-
     private TextView exerciseNameTag;
     private TextView setsTag;
     private TextView repsTag;
 
 
     private EditText inputWeight;
+    private TextView inputUnit;
     private Button startNewTestBtn;
     private Button confirmBtn;
     private Button skipBtn;
@@ -149,6 +149,7 @@ public class DailyCheckinActivity extends Activity {
         setsTag = (TextView) findViewById(R.id.textview_daily_sets_tag);
         repsTag = (TextView) findViewById(R.id.textview_daily_rep_tag);
 
+        inputUnit = (TextView)findViewById(R.id.textview_test_unit);
         progressBar = (SeekBar) findViewById(R.id.seekBar_progress);
         progressTextView = (TextView) findViewById(R.id.textView_seekprogress);
 
@@ -242,6 +243,7 @@ public class DailyCheckinActivity extends Activity {
         startNewTestBtn.setVisibility(View.VISIBLE);
         confirmBtn.setVisibility(View.VISIBLE);
         skipBtn.setVisibility(View.VISIBLE);
+        inputUnit.setVisibility(View.VISIBLE);
     }
 
     private void initScheduleView() {
@@ -306,6 +308,8 @@ public class DailyCheckinActivity extends Activity {
         exercise.setScheduleId(schedule.getId());
         exercise.setFailed_times(exerciseService.getFail_cnt());
         exercise.setSuccess_times(exerciseService.getSuc_cnt());
+
+
 
         exerciseService.record(exercise);
         exerciseService.refresh();

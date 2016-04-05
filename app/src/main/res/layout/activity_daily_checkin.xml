@@ -226,7 +226,6 @@
         android:visibility="gone" />
 
 
-
     <!-- only for test mode-->
     <TextView
         android:id="@+id/textview_test_result"
@@ -247,16 +246,29 @@
         android:textColor="#3CBA7B"
         android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/textview_test_input_weight"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:inputType="numberDecimal"
-        android:singleLine="true"
-        android:text="10"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="gone" />
+        android:layout_gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/textview_test_input_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:text="10"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textview_test_unit"
+            android:text="lbs"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -342,6 +354,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:visibility="gone" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

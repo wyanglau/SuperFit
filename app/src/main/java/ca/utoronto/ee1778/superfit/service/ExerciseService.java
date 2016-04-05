@@ -103,7 +103,7 @@ public class ExerciseService {
 
     public boolean tester(Result result) {
 
-        Log.d("ExerciseService", "entry:tester:recommended weight:"+nextWeight+"  "+ " heartRate:" + getHr()+"  " + result.toString() );
+        Log.d("ExerciseService", "entry:tester:recommended weight:" + nextWeight + "  " + " heartRate:" + getHr() + "  " + result.toString());
 
         Result curData = result;
 
@@ -262,6 +262,9 @@ public class ExerciseService {
         numOfEndRegionInOut = 0;
         thisRepResult = 0;
 
+        suc_cnt = 0;
+        fail_cnt = 0;
+
     }
 
     public int getSuc_cnt() {
@@ -316,8 +319,9 @@ public class ExerciseService {
         double calculateWeight() {
 
             double mhr = _hr / (220 - _age);
+            double epsi = 0.000000001;
 
-            if (mhr >= 0.625 && mhr <= 0.675) {
+            if (mhr - 0.625 > epsi && mhr - 0.675 < epsi) {
                 _preWeight = _curWeight;
                 _isFinish = true;
                 return _curWeight * 1.5;
@@ -331,7 +335,7 @@ public class ExerciseService {
                 return _curWeight + 5;
             }
 
-            if (_preWeight < _curWeight && (_curWeight - _preWeight) < 6) {
+            if (_preWeight < _curWeight && (_curWeight - _preWeight) < 6.0) {
                 _isFinish = true;
                 return (_preWeight + _curWeight) * 1.5 / 2;
             }

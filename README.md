@@ -1,5 +1,5 @@
 # SuperFit
-This is a course project for ECE1778 done by Ryan, Jiaxin and Shu. It is expected to be finished by the end of mid-April.
+This is a course project for ECE1778 done by Ryan, Jiaxin and Shu. ~~It is expected to be finished by the end of mid-April.~~(Final Report:http://www.eecg.utoronto.ca/~jayar/ece1778.2016w/superfit.pdf)
 
 Briefly speaking, SuperFit is a fitness app that helps people to avoid getting injure by retrieving realtime heart rate to recommend proper weight for users. Also, the correctness of postures will be monitored to help user enhance their skills. 
 
